@@ -122,6 +122,7 @@ include_directories(${catkin_INCLUDE_DIRS})
 
 ## Declare a C++ executable
 add_executable(busroute_node src/busroute.cpp)
+add_executable(bumpertest src/bumpertest.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -129,6 +130,10 @@ add_executable(busroute_node src/busroute.cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(busroute_node
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(bumpertest
   ${catkin_LIBRARIES}
 )
 
