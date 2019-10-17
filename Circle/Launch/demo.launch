@@ -1,6 +1,0 @@
-<launch>
-<include  file="$(find turtlebot_gazebo)/launch/turtlebot_world.launch"/>
-<node name="Turtle_Circle" pkg="Circle" type="Turtle_Circle">
-<remap from="/turtle1/cmd_vel" to="/cmd_vel_mux/input/teleop"/>
-</node>
-</launch>
