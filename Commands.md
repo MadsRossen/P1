@@ -86,3 +86,12 @@ Start RVIZ:
 rviz
 ---------------------------------------------------------------------------------
 
+
+
+Run launch file:
+----------------------------------------------------------------------------------
+roslaunch "package name" "launchfile".launch
+As an example turtlebot_gazebo_gmapping.launch will be launched in package busroute:
+
+roslaunch busroute turtlebot_gazebo_gmapping.launch
+-----------------------------------------------------------------------------------
