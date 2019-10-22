@@ -3,6 +3,9 @@
 #include <turtlesim/Pose.h>
 #include <iostream>
 #include <kobuki_msgs/BumperEvent.h>
+#include <kobuki_msgs/CliffEvent.h>
+#include <kobuki_msgs/WheelDropEvent.h>
+#include <kobuki_msgs/Sound.h>
 #include <yocs_controllers/default_controller.hpp>
 #include <std_msgs/Empty.h>
 #include <ros/console.h>
@@ -10,38 +13,62 @@
 
 //Class for all the functions:
 class SensorAct
+
 {
 //initializing public variables:
 public:
 SensorAct() :
-pressedBump(false)
+pressedBump(false),
+cliffDetected(false),
+wheeldropped(false)
 {
 //Initializing subscribers and publishers:
 bumper_event_subscriber_ = nh_.subscribe("/mobile_base/events/bumper", 10, &SensorAct::bumperEventCB, this);
+cliff_event_subscriber_ = nh_.subscribe("mobile/base/events/cliff", 10, &SensorAct::cliffEventCB, this);
+wheel_event_subscriber_ = nh_.subscribe("mobile_base/event/wheeldrop", 10, &SensorAct::wheeldropEventCB, this);
 cmd_vel_pub = nh_.advertise<geometry_msgs::Twist>("/turtle1/cmd_vel", 10);
-
+cmd_sound_pub = nh_.advertise<kobuki_msgs::Sound>("mobile_base/msg/sound", 10);
 }
 
 ~SensorAct()
   {
   }
-//Declaring public and private variables:
+//Declaring public and private variables and nodehanlders:
 public:
 bool pressedBump;
+bool cliffDetected;
+bool wheeldropped;
 geometry_msgs::Twist vel;
+kobuki_msgs::Sound smsg;
 ros::Publisher cmd_vel_pub;
 private:
 ros::NodeHandle nh_;
+ros::NodeHandle n;
 ros::Subscriber bumper_event_subscriber_;
+ros::Subscriber cliff_event_subscriber_;
+ros::Subscriber wheel_event_subscriber_;
+ros::Publisher cmd_sound_pub;
 
 
 /**
-   * @brief Trigger direction change and LED blink, when a bumper is pressed
+   * @brief Trigger boolean when a bumper is pressed
    * @param msg bumper event
    */
-  void bumperEventCB(const kobuki_msgs::BumperEventConstPtr msg);
+    void bumperEventCB(const kobuki_msgs::BumperEventConstPtr msg);
+
+/**
+    * @brief Trigger boolean when cliff is detected
+    * @param msg cliff event
+    */
+    void cliffEventCB(const kobuki_msgs::CliffEventConstPtr msg);
+/**
+ * @brief Trigger boolean when turtlebot is being lifted
+ * @param msg wheel lift event
+ */
+     void wheeldropEventCB(const kobuki_msgs::WheelDropEventConstPtr msg);
 
   //void moveEventCB();
+
 
 };
 
@@ -54,6 +81,9 @@ void SensorAct::bumperEventCB(const kobuki_msgs::BumperEventConstPtr msg)
      {    
           ROS_INFO_STREAM("Bumper PRESSED");
           pressedBump = true;
+          smsg.value = 4;
+          cmd_sound_pub.publish(smsg);
+
           
      }
      //Else we do this:
@@ -64,6 +94,32 @@ void SensorAct::bumperEventCB(const kobuki_msgs::BumperEventConstPtr msg)
      }
       //cmd_vel_pub.publish(vel);
  //std::cout << "[ INFO] [" << ros::Time::now() << "]: main catch" << std::endl;
+}
+
+void SensorAct::cliffEventCB(const kobuki_msgs::CliffEventConstPtr msg)
+{
+    if (msg->state == kobuki_msgs::CliffEvent::CLIFF)
+    {
+        ROS_INFO_STREAM("DETECTED CLIFF");
+    }
+    if (msg->state == kobuki_msgs::CliffEvent::FLOOR)
+    {
+        ROS_INFO_STREAM("DETECTED FLOOR");
+    }
+    
+
+}
+void SensorAct::wheeldropEventCB(const kobuki_msgs::WheelDropEventConstPtr msg)
+{
+     if (msg->state == kobuki_msgs::WheelDropEvent::DROPPED)
+     {
+          ROS_INFO_STREAM("WHEELS DROPPED");
+     }
+     if (msg->state == kobuki_msgs::WheelDropEvent::RAISED)
+     {
+          ROS_INFO_STREAM("WHEELS RAISED");
+     }
+     
 }
 /*void SensorAct::moveEventCB()
 {    geometry_msgs::Twist vel;
@@ -92,8 +148,9 @@ int main(int argc, char **argv) {
   //ros::Publisher cmd_vel_pub = nh.advertise<geometry_msgs::Twist>("/turtle1/cmd_vel", 10);
   //BumperBot checker;
 
-  //Initializing new SensorAct class with name ms: 
+  //Calling new SensorAct class with name ms: 
   SensorAct ms;
+  
   //Setting looprate of our while loop:
   ros::Rate loop_rate(100);
   while(ros::ok())
