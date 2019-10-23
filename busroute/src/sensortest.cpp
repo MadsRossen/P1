@@ -24,10 +24,10 @@ wheeldropped(false)
 {
 //Initializing subscribers and publishers:
 bumper_event_subscriber_ = nh_.subscribe("/mobile_base/events/bumper", 10, &SensorAct::bumperEventCB, this);
-cliff_event_subscriber_ = nh_.subscribe("mobile/base/events/cliff", 10, &SensorAct::cliffEventCB, this);
-wheel_event_subscriber_ = nh_.subscribe("mobile_base/event/wheeldrop", 10, &SensorAct::wheeldropEventCB, this);
+cliff_event_subscriber_ = nh_.subscribe("mobile_base/events/cliff", 10, &SensorAct::cliffEventCB, this);
+wheel_event_subscriber_ = nh_.subscribe("mobile_base/events/wheel_drop", 10, &SensorAct::wheeldropEventCB, this);
 cmd_vel_pub = nh_.advertise<geometry_msgs::Twist>("/turtle1/cmd_vel", 10);
-cmd_sound_pub = nh_.advertise<kobuki_msgs::Sound>("mobile_base/msg/sound", 10);
+cmd_sound_pub = nh_.advertise<kobuki_msgs::Sound>("mobile_base/commands/sound", 10);
 }
 
 ~SensorAct()
@@ -160,7 +160,7 @@ int main(int argc, char **argv) {
      {    
           for (int i=0; i<5; i++)
           {
-            ms.vel.linear.x = -0.3;
+            ms.vel.linear.x = -0.0;
             ms.vel.angular.z = 0.0;
             ms.cmd_vel_pub.publish(ms.vel);
             ROS_INFO_STREAM("BACKWARDS" << i);
@@ -169,7 +169,7 @@ int main(int argc, char **argv) {
           for(int i=0; i<45; i++)
           {
             ms.vel.linear.x = 0.0;
-            ms.vel.angular.z = 1.0;
+            ms.vel.angular.z = 0.0;
             ms.cmd_vel_pub.publish(ms.vel);
             ROS_INFO_STREAM("ROTATING " << i);
             ros::Duration(0.1).sleep();
@@ -181,9 +181,9 @@ int main(int argc, char **argv) {
      //If bumper is not pressed, then drive forward:
      if (!ms.pressedBump)
      {
-          ms.vel.linear.x = 0.3;
+          ms.vel.linear.x = 0.0;
           ms.vel.angular.z = 0.0;
-          ROS_INFO_STREAM("FORWARD");
+          //ROS_INFO_STREAM("FORWARD");
           ms.cmd_vel_pub.publish(ms.vel);
      }
      //Running loop for publishers and listeners:
