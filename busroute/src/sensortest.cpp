@@ -10,6 +10,8 @@
 #include <std_msgs/Empty.h>
 #include <ros/console.h>
 #include <std_msgs/String.h>
+#include <sound_play/sound_play.h>
+#include <unistd.h>
 
 //Class for all the functions:
 class SensorAct
@@ -39,6 +41,7 @@ bool pressedBump;
 bool cliffDetected;
 bool wheeldropped;
 geometry_msgs::Twist vel;
+
 kobuki_msgs::Sound smsg;
 ros::Publisher cmd_vel_pub;
 private:
@@ -48,6 +51,8 @@ ros::Subscriber bumper_event_subscriber_;
 ros::Subscriber cliff_event_subscriber_;
 ros::Subscriber wheel_event_subscriber_;
 ros::Publisher cmd_sound_pub;
+sound_play::SoundClient sc;
+
 
 
 /**
@@ -81,8 +86,9 @@ void SensorAct::bumperEventCB(const kobuki_msgs::BumperEventConstPtr msg)
      {    
           ROS_INFO_STREAM("Bumper PRESSED");
           pressedBump = true;
-          smsg.value = 4;
-          cmd_sound_pub.publish(smsg);
+          //smsg.value = 4;
+          //cmd_sound_pub.publish(smsg);
+          sc.playWave("/ws/src/Sounds/Reee.wav", 100);
 
           
      }
@@ -118,6 +124,7 @@ void SensorAct::wheeldropEventCB(const kobuki_msgs::WheelDropEventConstPtr msg)
      if (msg->state == kobuki_msgs::WheelDropEvent::RAISED)
      {
           ROS_INFO_STREAM("WHEELS RAISED");
+          sc.playWave("/ws/src/Sounds/scream6.wav", 100);
      }
      
 }
