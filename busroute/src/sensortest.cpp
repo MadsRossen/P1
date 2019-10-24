@@ -88,7 +88,7 @@ void SensorAct::bumperEventCB(const kobuki_msgs::BumperEventConstPtr msg)
           pressedBump = true;
           //smsg.value = 4;
           //cmd_sound_pub.publish(smsg);
-          sc.playWave("/ws/src/Sounds/Reee.wav", 100);
+          sc.playWave("/ws/src/P1/busroute/Sounds/Reee.wav", 100);
 
           
      }
@@ -124,7 +124,7 @@ void SensorAct::wheeldropEventCB(const kobuki_msgs::WheelDropEventConstPtr msg)
      if (msg->state == kobuki_msgs::WheelDropEvent::RAISED)
      {
           ROS_INFO_STREAM("WHEELS RAISED");
-          sc.playWave("/ws/src/Sounds/scream6.wav", 100);
+          sc.playWave("/ws/src/P1/busroute/Sounds/scream6.wav", 100);
      }
      
 }
