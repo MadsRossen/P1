@@ -88,7 +88,7 @@ void SensorAct::bumperEventCB(const kobuki_msgs::BumperEventConstPtr msg)
           pressedBump = true;
           //smsg.value = 4;
           //cmd_sound_pub.publish(smsg);
-          sc.playWave("/home/ros/ws/src/P1/busroute/Sounds/Reee.wav", 1.0);
+          sc.playWave("/home/p1-ros/ws/src/P1/busroute/sounds/Ouch.wav", 1.0);
           
 
           
@@ -121,11 +121,12 @@ void SensorAct::wheeldropEventCB(const kobuki_msgs::WheelDropEventConstPtr msg)
      if (msg->state == kobuki_msgs::WheelDropEvent::DROPPED)
      {
           ROS_INFO_STREAM("WHEELS DROPPED");
+		sc.playWave("/home/p1-ros/ws/src/P1/busroute/sounds/Reee.wav", 1.0);
      }
      if (msg->state == kobuki_msgs::WheelDropEvent::RAISED)
      {
           ROS_INFO_STREAM("WHEELS RAISED");
-          sc.playWave("/home/ros/ws/src/P1/busroute/Sounds/Ouch.wav", 1.0);
+          
      }
      
 }
