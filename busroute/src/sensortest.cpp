@@ -88,7 +88,12 @@ void SensorAct::bumperEventCB(const kobuki_msgs::BumperEventConstPtr msg)
           pressedBump = true;
           //smsg.value = 4;
           //cmd_sound_pub.publish(smsg);
-          sc.playWave("/home/p1-ros/ws/src/P1/busroute/sounds/Ouch.wav", 1.0);
+
+          //For p1-ros machine:
+          //sc.playWave("/home/p1-ros/ws/src/P1/busroute/sounds/Ouch.wav", 1.0);
+
+          //For ubu machine:
+          sc.playWave("/home/ubu/ws/src/P1/busroute/sounds/Ouch.wav", 1.0);
           
 
           
@@ -121,7 +126,11 @@ void SensorAct::wheeldropEventCB(const kobuki_msgs::WheelDropEventConstPtr msg)
      if (msg->state == kobuki_msgs::WheelDropEvent::DROPPED)
      {
           ROS_INFO_STREAM("WHEELS DROPPED");
-		sc.playWave("/home/p1-ros/ws/src/P1/busroute/sounds/Reee.wav", 1.0);
+          //For p1-ros machine:
+		//sc.playWave("/home/p1-ros/ws/src/P1/busroute/sounds/Reee.wav", 1.0);
+
+          //For ubu machine:
+          sc.playWave("/home/ubu/ws/src/P1/busroute/sounds/Reee.wav", 1.0);
      }
      if (msg->state == kobuki_msgs::WheelDropEvent::RAISED)
      {
@@ -163,7 +172,12 @@ int main(int argc, char **argv) {
   //Setting looprate of our while loop:
   ros::Rate loop_rate(100);
 
-  ms.sc.startWave("/home/p1-ros/ws/src/P1/busroute/sounds/music.wav", 1.0);
+  //For p1-ros machine:
+  //ms.sc.startWave("/home/p1-ros/ws/src/P1/busroute/sounds/music.wav", 1.0);
+
+  //For ubu machine:
+  ms.sc.startWave("/home/ubu/ws/src/P1/busroute/sounds/music.wav", 1.0);
+
   while(ros::ok())
   {  
      //If bumper is pressed turtlebot will drive backwards and rotate:
