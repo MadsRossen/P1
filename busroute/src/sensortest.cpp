@@ -12,11 +12,13 @@
 #include <std_msgs/String.h>
 #include <sound_play/sound_play.h>
 #include <unistd.h>
+#include <time.h>
 
 //Class for all the functions:
 class SensorAct
 
 {
+     
 //initializing public variables:
 public:
 SensorAct() :
@@ -30,10 +32,12 @@ cliff_event_subscriber_ = nh_.subscribe("mobile_base/events/cliff", 10, &SensorA
 wheel_event_subscriber_ = nh_.subscribe("mobile_base/events/wheel_drop", 10, &SensorAct::wheeldropEventCB, this);
 cmd_vel_pub = nh_.advertise<geometry_msgs::Twist>("/turtle1/cmd_vel", 10);
 cmd_sound_pub = nh_.advertise<kobuki_msgs::Sound>("mobile_base/commands/sound", 10);
+
 }
 
 ~SensorAct()
   {
+       
   }
 //Declaring public and private variables and nodehanlders:
 public:
@@ -41,12 +45,12 @@ bool pressedBump;
 bool cliffDetected;
 bool wheeldropped;
 geometry_msgs::Twist vel;
-sound_play::SoundClient sc;
+
 kobuki_msgs::Sound smsg;
 ros::Publisher cmd_vel_pub;
-private:
 ros::NodeHandle nh_;
-ros::NodeHandle n;
+private:
+sound_play::SoundClient sc;
 ros::Subscriber bumper_event_subscriber_;
 ros::Subscriber cliff_event_subscriber_;
 ros::Subscriber wheel_event_subscriber_;
@@ -72,7 +76,7 @@ ros::Publisher cmd_sound_pub;
  */
      void wheeldropEventCB(const kobuki_msgs::WheelDropEventConstPtr msg);
 
-  //void moveEventCB();
+     
 
 
 };
@@ -93,10 +97,15 @@ void SensorAct::bumperEventCB(const kobuki_msgs::BumperEventConstPtr msg)
           //sc.playWave("/home/p1-ros/ws/src/P1/busroute/sounds/Ouch.wav", 1.0);
 
           //For ubu machine:
-          sc.playWave("/home/ubu/ws/src/P1/busroute/sounds/Ouch.wav", 1.0);
-          
-
-          
+          int nrSound = rand() %2 + 1;
+          if(nrSound == 1)
+          {
+               sc.playWave("/home/ubu/ws/src/P1/busroute/sounds/Ouch.wav", 1.0);
+          }
+          else
+          {
+               sc.playWave("/home/ubu/ws/src/P1/busroute/sounds/roblox.wav", 1.0);
+          } 
      }
      //Else we do this:
      else
@@ -113,6 +122,7 @@ void SensorAct::cliffEventCB(const kobuki_msgs::CliffEventConstPtr msg)
     if (msg->state == kobuki_msgs::CliffEvent::CLIFF)
     {
         ROS_INFO_STREAM("DETECTED CLIFF");
+        
     }
     if (msg->state == kobuki_msgs::CliffEvent::FLOOR)
     {
@@ -131,6 +141,8 @@ void SensorAct::wheeldropEventCB(const kobuki_msgs::WheelDropEventConstPtr msg)
 
           //For ubu machine:
           sc.playWave("/home/ubu/ws/src/P1/busroute/sounds/Reee.wav", 1.0);
+          
+          
      }
      if (msg->state == kobuki_msgs::WheelDropEvent::RAISED)
      {
@@ -138,6 +150,15 @@ void SensorAct::wheeldropEventCB(const kobuki_msgs::WheelDropEventConstPtr msg)
           
      }
      
+}
+
+void sleepok(int t, ros::NodeHandle &nh_)
+{
+     if(nh_.ok())
+     {
+          sleep(t);    
+     }
+
 }
 /*void SensorAct::moveEventCB()
 {    geometry_msgs::Twist vel;
@@ -175,11 +196,9 @@ int main(int argc, char **argv) {
   //For p1-ros machine:
   //ms.sc.startWave("/home/p1-ros/ws/src/P1/busroute/sounds/music.wav", 1.0);
 
-  //For ubu machine:
-  ms.sc.startWave("/home/ubu/ws/src/P1/busroute/sounds/music.wav", 1.0);
-
   while(ros::ok())
   {  
+     
      //If bumper is pressed turtlebot will drive backwards and rotate:
      if (ms.pressedBump)
      {    
@@ -199,7 +218,7 @@ int main(int argc, char **argv) {
             ROS_INFO_STREAM("ROTATING " << i);
             ros::Duration(0.1).sleep();
           }
-          
+          ms.pressedBump = false;
           //ms.vel.angular.z = 4.0;
           
      }
@@ -210,6 +229,7 @@ int main(int argc, char **argv) {
           ms.vel.angular.z = 0.0;
           //ROS_INFO_STREAM("FORWARD");
           ms.cmd_vel_pub.publish(ms.vel);
+          
      }
      //Running loop for publishers and listeners:
      ros::spinOnce();
