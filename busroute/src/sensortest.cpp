@@ -41,7 +41,7 @@ bool pressedBump;
 bool cliffDetected;
 bool wheeldropped;
 geometry_msgs::Twist vel;
-
+sound_play::SoundClient sc;
 kobuki_msgs::Sound smsg;
 ros::Publisher cmd_vel_pub;
 private:
@@ -51,7 +51,7 @@ ros::Subscriber bumper_event_subscriber_;
 ros::Subscriber cliff_event_subscriber_;
 ros::Subscriber wheel_event_subscriber_;
 ros::Publisher cmd_sound_pub;
-sound_play::SoundClient sc;
+
 
 
 
@@ -162,6 +162,8 @@ int main(int argc, char **argv) {
   
   //Setting looprate of our while loop:
   ros::Rate loop_rate(100);
+
+  ms.sc.startWave("/home/p1-ros/ws/src/P1/busroute/sounds/music.wav", 1.0);
   while(ros::ok())
   {  
      //If bumper is pressed turtlebot will drive backwards and rotate:
