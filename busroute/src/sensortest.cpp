@@ -42,8 +42,8 @@ public:
 bool pressedBump;
 bool cliffDetected;
 bool wheeldropped;
-geometry_msgs::Twist vel;
 
+geometry_msgs::Twist vel;
 kobuki_msgs::Sound smsg;
 ros::Publisher cmd_vel_pub;
 ros::NodeHandle nh_;
@@ -88,13 +88,16 @@ void SensorAct::bumperEventCB(const kobuki_msgs::BumperEventConstPtr msg)
      {    
           ROS_INFO_STREAM("Bumper PRESSED");
           pressedBump = true;
-          //smsg.value = 4;
-          //cmd_sound_pub.publish(smsg);
 
-          //For p1-ros machine:
+          /**Code for send sound not being used:
+          *smsg.value = 4;
+          *cmd_sound_pub.publish(smsg);
+          */
+
+          //Play file wav for p1-ros machine:
           //sc.playWave("/home/p1-ros/ws/src/P1/busroute/sounds/Ouch.wav", 1.0);
 
-          //For ubu machine:
+          //Play wav file for ubu machine:
           int nrSound = rand() %2 + 1;
           if(nrSound == 1)
           {
@@ -111,17 +114,19 @@ void SensorAct::bumperEventCB(const kobuki_msgs::BumperEventConstPtr msg)
           ROS_INFO_STREAM("Bumper RELEASED");
           pressedBump = false;
      }
-      //cmd_vel_pub.publish(vel);
- //std::cout << "[ INFO] [" << ros::Time::now() << "]: main catch" << std::endl;
+     
+ 
 }
-
+//Checking if cliff have been registered:
 void SensorAct::cliffEventCB(const kobuki_msgs::CliffEventConstPtr msg)
 {
+     //if cliff have been registered:
     if (msg->state == kobuki_msgs::CliffEvent::CLIFF)
     {
         ROS_INFO_STREAM("DETECTED CLIFF");
         
     }
+    //If not then we do this:
     if (msg->state == kobuki_msgs::CliffEvent::FLOOR)
     {
         ROS_INFO_STREAM("DETECTED FLOOR");
@@ -129,19 +134,23 @@ void SensorAct::cliffEventCB(const kobuki_msgs::CliffEventConstPtr msg)
     
 
 }
+//Checking if wheelsensors are getting a input
 void SensorAct::wheeldropEventCB(const kobuki_msgs::WheelDropEventConstPtr msg)
-{
+{    
+     //If turtlebot wheels is dropped:
      if (msg->state == kobuki_msgs::WheelDropEvent::DROPPED)
      {
           ROS_INFO_STREAM("WHEELS DROPPED");
-          //For p1-ros machine:
+
+          //Play wav file for p1-ros machine:
 		//sc.playWave("/home/p1-ros/ws/src/P1/busroute/sounds/Reee.wav", 1.0);
 
-          //For ubu machine:
+          //Play wav file for ubu machine:
           sc.playWave("/home/ubu/ws/src/P1/busroute/sounds/Reee.wav", 1.0);
           
           
      }
+     //If turtlebot wheels is raised:
      if (msg->state == kobuki_msgs::WheelDropEvent::RAISED)
      {
           ROS_INFO_STREAM("WHEELS RAISED");
@@ -149,7 +158,7 @@ void SensorAct::wheeldropEventCB(const kobuki_msgs::WheelDropEventConstPtr msg)
      }
      
 }
-
+//A sleep function not curently being used:
 void sleepok(int t, ros::NodeHandle &nh_)
 {
      if(nh_.ok())
@@ -158,41 +167,17 @@ void sleepok(int t, ros::NodeHandle &nh_)
      }
 
 }
-/*void SensorAct::moveEventCB()
-{    geometry_msgs::Twist vel;
-     //geometry_msgs::TwistPtr veloci;
-     //veloci.reset(new geometry_msgs::Twist());
-     if (pressedBump)
-     {
-          vel.linear.x = 0.0;
-          vel.angular.z = 9.0;
-          ROS_INFO_STREAM("Bot Stopping ");
-     }
-     else
-     {
-          //vel.linear.x = 1.0;
-          vel.angular.z = 0.0;
-          ROS_INFO_STREAM("Bot Moving ");
-     }
-     cmd_vel_pub.publish(vel);
-     ROS_INFO_STREAM("In loop");
-     //ros::Duration(1.0).sleep();
-}*/
+
 
 int main(int argc, char **argv) {
   ros::init(argc, argv, "move_turtle");
-  //ros::NodeHandle nh;
-  //ros::Publisher cmd_vel_pub = nh.advertise<geometry_msgs::Twist>("/turtle1/cmd_vel", 10);
-  //BumperBot checker;
+  
 
   //Calling new SensorAct class with name ms: 
   SensorAct ms;
   
   //Setting looprate of our while loop:
   ros::Rate loop_rate(100);
-
-  //For p1-ros machine:
-  //ms.sc.startWave("/home/p1-ros/ws/src/P1/busroute/sounds/music.wav", 1.0);
 
   while(ros::ok())
   {  
@@ -233,7 +218,6 @@ int main(int argc, char **argv) {
      ros::spinOnce();
      loop_rate.sleep();
   }
-  //ros::Subscriber botbumper = nh.subscribe("bumper", 10, &BumperBot::botBump, &checker);
   
 return 0;
 }
