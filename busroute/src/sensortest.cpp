@@ -1,13 +1,11 @@
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
-#include <turtlesim/Pose.h>
 #include <iostream>
 #include <kobuki_msgs/BumperEvent.h>
 #include <kobuki_msgs/CliffEvent.h>
 #include <kobuki_msgs/WheelDropEvent.h>
 #include <kobuki_msgs/Sound.h>
-#include <yocs_controllers/default_controller.hpp>
-#include <std_msgs/Empty.h>
+//#include <std_msgs/Empty.h>
 #include <ros/console.h>
 #include <std_msgs/String.h>
 #include <sound_play/sound_play.h>
