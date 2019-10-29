@@ -4,6 +4,7 @@
 #include <kobuki_msgs/BumperEvent.h>
 #include <kobuki_msgs/CliffEvent.h>
 #include <kobuki_msgs/WheelDropEvent.h>
+#include <kobuki_msgs/DigitalInputEvent.h>
 #include <kobuki_msgs/Sound.h>
 //#include <std_msgs/Empty.h>
 #include <ros/console.h>
@@ -28,6 +29,7 @@ wheeldropped(false)
 bumper_event_subscriber_ = nh_.subscribe("/mobile_base/events/bumper", 10, &SensorAct::bumperEventCB, this);
 cliff_event_subscriber_ = nh_.subscribe("mobile_base/events/cliff", 10, &SensorAct::cliffEventCB, this);
 wheel_event_subscriber_ = nh_.subscribe("mobile_base/events/wheel_drop", 10, &SensorAct::wheeldropEventCB, this);
+digitalInput_event_subsriber_ = nh_.subscribe("mobile_base/events/digital_input", 10, &SensorAct::digitalInputCB, this);
 cmd_vel_pub = nh_.advertise<geometry_msgs::Twist>("/turtle1/cmd_vel", 10);
 cmd_sound_pub = nh_.advertise<kobuki_msgs::Sound>("mobile_base/commands/sound", 10);
 
@@ -51,6 +53,7 @@ private:
 sound_play::SoundClient sc;
 ros::Subscriber bumper_event_subscriber_;
 ros::Subscriber cliff_event_subscriber_;
+ros::Subscriber digitalInput_event_subsriber_;
 ros::Subscriber wheel_event_subscriber_;
 ros::Publisher cmd_sound_pub;
 
@@ -73,8 +76,11 @@ ros::Publisher cmd_sound_pub;
  * @param msg wheel lift event
  */
      void wheeldropEventCB(const kobuki_msgs::WheelDropEventConstPtr msg);
-
-     
+/**
+ * @brief Trigger boolean when turtlebot is getting sensordata
+ * @param msg sensor event
+ */
+     void digitalInputCB(const kobuki_msgs::DigitalInputEventConstPtr msg);
 
 
 };
@@ -168,6 +174,13 @@ void sleepok(int t, ros::NodeHandle &nh_)
 
 }
 
+void SensorAct::digitalInputCB(const kobuki_msgs::DigitalInputEventConstPtr msg)
+{
+     if (msg->values[1] == 1)
+     {
+          ROS_INFO_STREAM("INPUT FROM SENSOR");
+     }
+}
 
 int main(int argc, char **argv) {
   ros::init(argc, argv, "move_turtle");
