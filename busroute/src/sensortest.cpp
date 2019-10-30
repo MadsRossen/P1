@@ -22,15 +22,22 @@ class SensorAct
 public:
 SensorAct() :
 pressedBump(false),
-cliffDetected(false),
-wheeldropped(false)
+cliffDetected_left(false),
+cliffDetected_right(false),
+cliffDetected_center(false),
+cliffDetected_floor(false),
+
+wheeldropped(false),
+wheeldropped_right(false),
+wheeldropped_left(false)
+
 {
 //Initializing subscribers and publishers:
 bumper_event_subscriber_ = nh_.subscribe("/mobile_base/events/bumper", 10, &SensorAct::bumperEventCB, this);
 cliff_event_subscriber_ = nh_.subscribe("mobile_base/events/cliff", 10, &SensorAct::cliffEventCB, this);
 wheel_event_subscriber_ = nh_.subscribe("mobile_base/events/wheel_drop", 10, &SensorAct::wheeldropEventCB, this);
 digitalInput_event_subsriber_ = nh_.subscribe("mobile_base/events/digital_input", 10, &SensorAct::digitalInputCB, this);
-cmd_vel_pub = nh_.advertise<geometry_msgs::Twist>("/turtle1/cmd_vel", 10);
+cmd_vel_pub = nh_.advertise<geometry_msgs::Twist>("/cmd_vel_mux/input/teleop", 10);
 cmd_sound_pub = nh_.advertise<kobuki_msgs::Sound>("mobile_base/commands/sound", 10);
 
 }
@@ -42,8 +49,14 @@ cmd_sound_pub = nh_.advertise<kobuki_msgs::Sound>("mobile_base/commands/sound", 
 //Declaring public and private variables and nodehanlders:
 public:
 bool pressedBump;
-bool cliffDetected;
+bool cliffDetected_right;
+bool cliffDetected_center;
+bool cliffDetected_left;
+bool cliffDetected_floor;
+bool wheeldropped_right;
+bool wheeldropped_left;
 bool wheeldropped;
+
 
 geometry_msgs::Twist vel;
 kobuki_msgs::Sound smsg;
@@ -129,13 +142,46 @@ void SensorAct::cliffEventCB(const kobuki_msgs::CliffEventConstPtr msg)
      //if cliff have been registered:
     if (msg->state == kobuki_msgs::CliffEvent::CLIFF)
     {
-        ROS_INFO_STREAM("DETECTED CLIFF");
-        
+         switch (msg->sensor)
+         {
+          case kobuki_msgs::CliffEvent::LEFT:
+          if (!cliffDetected_left)
+          {
+               ROS_INFO_STREAM("Cliff: LEFT");
+               cliffDetected_left = true;
+          }
+          break;
+          case kobuki_msgs::CliffEvent::RIGHT:
+          if (!cliffDetected_right)
+          {
+               ROS_INFO_STREAM("cliff: RIGHT");
+               cliffDetected_right = true;
+          }
+          break;
+          case kobuki_msgs::CliffEvent::CENTER:
+          if (!cliffDetected_center)
+          {
+               ROS_INFO_STREAM("Cliff: CENTER");
+               cliffDetected_center = true;
+          }
+          break;
+         }
     }
+     else // kobuki_msgs::BumperEvent::FLOOR
+     {
+     switch (msg->sensor)
+     {
+      case kobuki_msgs::CliffEvent::LEFT:    cliffDetected_left   = false; break;
+      case kobuki_msgs::CliffEvent::CENTER:  cliffDetected_center = false; break;
+      case kobuki_msgs::CliffEvent::RIGHT:   cliffDetected_right  = false; break;
+     }
+  }   
+
     //If not then we do this:
     if (msg->state == kobuki_msgs::CliffEvent::FLOOR)
     {
         ROS_INFO_STREAM("DETECTED FLOOR");
+        cliffDetected_floor = true;
     }
     
 
@@ -144,25 +190,49 @@ void SensorAct::cliffEventCB(const kobuki_msgs::CliffEventConstPtr msg)
 void SensorAct::wheeldropEventCB(const kobuki_msgs::WheelDropEventConstPtr msg)
 {    
      //If turtlebot wheels is dropped:
+     if (msg->state == kobuki_msgs::WheelDropEvent::LEFT || msg->state == kobuki_msgs::WheelDropEvent::RIGHT)
+     {
+          switch (msg->wheel)
+          {
+          case kobuki_msgs::WheelDropEvent::LEFT:
+               if(!wheeldropped_left)
+               {
+                    ROS_WARN("left wheel dropped");
+                    wheeldropped_left = true;
+               }
+          break;
+
+          case kobuki_msgs::WheelDropEvent::RIGHT:
+               if(!wheeldropped_right)
+               {
+                    ROS_WARN("right wheel dropped");
+                    wheeldropped_right = true;
+               }
+          break;
+          default:
+          if(!wheeldropped)
+               {
+                    ROS_WARN("both wheels dropped");
+                    wheeldropped = true;
+               }
+          break;
+          }
+     }
+     /*
      if (msg->state == kobuki_msgs::WheelDropEvent::DROPPED)
      {
-          ROS_INFO_STREAM("WHEELS DROPPED");
+          ROS_WARN("both wheels dropped");
+          wheeldropped_left =true;
+          wheeldropped_right = true;
+     }*/
+     
 
-          //Play wav file for p1-ros machine:
-		//sc.playWave("/home/p1-ros/ws/src/P1/busroute/sounds/Reee.wav", 1.0);
-
-          //Play wav file for ubu machine:
-          sc.playWave("/home/ubu/ws/src/P1/busroute/sounds/Reee.wav", 1.0);
-          
-          
-     }
      //If turtlebot wheels is raised:
      if (msg->state == kobuki_msgs::WheelDropEvent::RAISED)
      {
           ROS_INFO_STREAM("WHEELS RAISED");
           
      }
-     
 }
 //A sleep function not curently being used:
 void sleepok(int t, ros::NodeHandle &nh_)
@@ -171,7 +241,6 @@ void sleepok(int t, ros::NodeHandle &nh_)
      {
           sleep(t);    
      }
-
 }
 
 void SensorAct::digitalInputCB(const kobuki_msgs::DigitalInputEventConstPtr msg)
@@ -184,7 +253,6 @@ void SensorAct::digitalInputCB(const kobuki_msgs::DigitalInputEventConstPtr msg)
 
 int main(int argc, char **argv) {
   ros::init(argc, argv, "move_turtle");
-  
 
   //Calling new SensorAct class with name ms: 
   SensorAct ms;
@@ -194,7 +262,20 @@ int main(int argc, char **argv) {
 
   while(ros::ok())
   {  
-     
+
+ //tjek for cliff
+     if (ms.cliffDetected_center)
+     {
+          std::cout << "cliff center" << std::endl;
+          ms.cliffDetected_center=false;
+          for (int i=0; i<5; i++){
+          ms.vel.linear.x = -0.1;
+          ms.vel.angular.z = 0.0;
+          ms.cmd_vel_pub.publish(ms.vel);
+          ROS_INFO("BACKWARDS");
+          ros::Duration(0.1).sleep();
+          }
+     }
      //If bumper is pressed turtlebot will drive backwards and rotate:
      if (ms.pressedBump)
      {    
@@ -229,9 +310,8 @@ int main(int argc, char **argv) {
      }
      //Running loop for publishers and listeners:
      ros::spinOnce();
-     loop_rate.sleep();
+     loop_rate.sleep();  
   }
-  
 return 0;
 }
 
