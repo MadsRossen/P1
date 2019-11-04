@@ -5,6 +5,7 @@
 #include <kobuki_msgs/CliffEvent.h>
 #include <kobuki_msgs/WheelDropEvent.h>
 #include <kobuki_msgs/DigitalInputEvent.h>
+#include <kobuki_msgs/PowerSystemEvent.h>
 #include <kobuki_msgs/Sound.h>
 //#include <std_msgs/Empty.h>
 #include <ros/console.h>
@@ -36,12 +37,14 @@ wheeldropped_left(false)
 
 {
 //Initializing subscribers and publishers:
-bumper_event_subscriber_ = nh_.subscribe("/mobile_base/events/bumper", 10, &SensorAct::bumperEventCB, this);
+bumper_event_subscriber_ = nh_.subscribe("mobile_base/events/bumper", 10, &SensorAct::bumperEventCB, this);
 cliff_event_subscriber_ = nh_.subscribe("mobile_base/events/cliff", 10, &SensorAct::cliffEventCB, this);
 wheel_event_subscriber_ = nh_.subscribe("mobile_base/events/wheel_drop", 10, &SensorAct::wheeldropEventCB, this);
 digitalInput_event_subsriber_ = nh_.subscribe("mobile_base/events/digital_input", 10, &SensorAct::digitalInputCB, this);
+powerSystem_event_subscriber_ = nh_.subscribe("mobile_base/events/power_system", 10, &SensorAct::powerSystemCB, this);
 cmd_vel_pub = nh_.advertise<geometry_msgs::Twist>("/cmd_vel_mux/input/teleop", 10);
 cmd_sound_pub = nh_.advertise<kobuki_msgs::Sound>("mobile_base/commands/sound", 10);
+
 
 }
 
@@ -77,6 +80,7 @@ ros::Subscriber bumper_event_subscriber_;
 ros::Subscriber cliff_event_subscriber_;
 ros::Subscriber digitalInput_event_subsriber_;
 ros::Subscriber wheel_event_subscriber_;
+ros::Subscriber powerSystem_event_subscriber_;
 ros::Publisher cmd_sound_pub;
 
 
@@ -103,9 +107,27 @@ ros::Publisher cmd_sound_pub;
  * @param msg sensor event
  */
      void digitalInputCB(const kobuki_msgs::DigitalInputEventConstPtr msg);
-
+/**
+ * @brief Get boolean when battery is low (15%) or critical low (5%)
+ * @param msg 
+ */
+     void powerSystemCB(const kobuki_msgs::PowerSystemEventConstPtr msg);
 
 };
+
+//Checking the powerstate of the battery:
+void SensorAct::powerSystemCB(const kobuki_msgs::PowerSystemEventConstPtr msg)
+{
+     if (msg->event == kobuki_msgs::PowerSystemEvent::BATTERY_LOW)
+     {
+          ROS_INFO_STREAM("BATTERY LOW");
+     }
+     if (msg->event == kobuki_msgs::PowerSystemEvent::BATTERY_CRITICAL)
+     {
+         ROS_INFO_STREAM("BATTERY CRITICAL LOW"); 
+     }
+
+}
 
 //Checking if bumper is pressed
 void SensorAct::bumperEventCB(const kobuki_msgs::BumperEventConstPtr msg)
