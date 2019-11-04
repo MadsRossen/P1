@@ -245,9 +245,21 @@ void sleepok(int t, ros::NodeHandle &nh_)
 
 void SensorAct::digitalInputCB(const kobuki_msgs::DigitalInputEventConstPtr msg)
 {
-     if (msg->values[1] == 1)
+     if (msg->values[1] == true)
      {
-          ROS_INFO_STREAM("INPUT FROM SENSOR");
+          ROS_INFO_STREAM("INPUT FROM SENSOR 1");
+     }
+     if (msg->values[2] == true)
+     {
+          ROS_INFO_STREAM("INPUT FROM SENSOR 2");
+     }
+     if (msg->values[3] == true)
+     {
+          ROS_INFO_STREAM("INPUT FROM SENSOR 3");
+     }
+     if (msg->values[0] == true)
+     {
+          ROS_INFO_STREAM("INPUT FROM SENSOR 0");
      }
 }
 
