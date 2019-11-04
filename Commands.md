@@ -95,3 +95,39 @@ As an example turtlebot_gazebo_gmapping.launch will be launched in package busro
 
 roslaunch busroute turtlebot_gazebo_gmapping.launch
 -----------------------------------------------------------------------------------
+
+
+Edit Bash file to run ROS on MASTER_PC via network as standard :
+REMEMBER! switch VMWare network adapter from NAT to bridged, when communicating with
+ROS on MASTER_PC via network and back again when running ROS on your own pc.
+-----------------------------------------------------------------------------------
+Write in terminal:
+gedit .bashrc
+
+write these lines in the bottom of the bash file, remember to edit "MASTER_IP" and "YOUR_PC_IP" to the apropiate IP's:
+export ROS_MASTER_URI=http://"MASTER_IP":11311/
+export ROS_HOSTNAME="YOUR_PC_IP"
+export ROS_IP="YOUR_PC_IP"
+
+Save bash file and close it, then write in terminal:
+source ~/.bashrc
+-----------------------------------------------------------------------------------
+
+Edit Bash file to run on your own pc again as standard: 
+------------------------------------------------------------------------------------
+Write in terminal:
+gedit .bashrc
+
+Comment out the these lines you wrote earlier in the bottom of the bash file with #:
+#export ROS_MASTER_URI=http://"MASTER_IP":11311/
+#export ROS_HOSTNAME="YOUR_PC_IP"
+#export ROS_IP="YOUR_PC_IP"
+
+Now write these lines in the bottom of the bash file: 
+export ROS_MASTER_URI=http://localhost:11311/
+export ROS_HOSTNAME=localhost
+
+Save bash file and close it, then write in terminal:
+source ~/.bashrc
+-------------------------------------------------------------------------------------
+
