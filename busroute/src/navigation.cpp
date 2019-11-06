@@ -1,13 +1,13 @@
-
 #include <ros/ros.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
-
+#include "getSensor.h" 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 int main(int argc, char** argv){
   ros::init(argc, argv, "simple_navigation_goals");
-
+  SensorAct sAct;
+  
   //tell the action client that we want to spin a thread by default
   MoveBaseClient ac("move_base", true);
 
@@ -34,6 +34,7 @@ int main(int argc, char** argv){
     ROS_INFO("Hooray, the base moved 1 meter forward");
   else
     ROS_INFO("The base failed to move forward 1 meter for some reason");
+    
 
   return 0;
 }

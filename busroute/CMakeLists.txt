@@ -125,6 +125,8 @@ add_executable(busroute_node src/busroute.cpp)
 
 add_executable(sensortest src/sensortest.cpp)
 
+add_executable(getSensor src/getSensor.cpp)
+
 add_executable(navigation src/navigation.cpp)
 
 add_executable(auto_docking src/auto_docking.cpp)
@@ -139,6 +141,10 @@ target_link_libraries(busroute_node
 )
 
 target_link_libraries(sensortest
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(getSensor
   ${catkin_LIBRARIES}
 )
 
