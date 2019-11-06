@@ -125,6 +125,8 @@ add_executable(busroute_node src/busroute.cpp)
 
 add_executable(sensortest src/sensortest.cpp)
 
+add_executable(navigation src/navigation.cpp)
+
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 # add_dependencies(busroute_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -137,6 +139,10 @@ target_link_libraries(busroute_node
 
 
 target_link_libraries(sensortest
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(navigation
   ${catkin_LIBRARIES}
 )
 

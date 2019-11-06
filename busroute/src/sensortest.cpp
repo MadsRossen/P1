@@ -5,6 +5,7 @@
 #include <kobuki_msgs/CliffEvent.h>
 #include <kobuki_msgs/WheelDropEvent.h>
 #include <kobuki_msgs/DigitalInputEvent.h>
+#include <kobuki_msgs/PowerSystemEvent.h>
 #include <kobuki_msgs/Sound.h>
 //#include <std_msgs/Empty.h>
 #include <ros/console.h>
@@ -21,24 +22,29 @@ class SensorAct
 //initializing public variables:
 public:
 SensorAct() :
+//Declaring all booleans to be false at start.
 pressedBump(false),
+bumper_pressed_left(false),
+bumper_pressed_center(false),
+bumper_pressed_right(false),
 cliffDetected_left(false),
 cliffDetected_right(false),
 cliffDetected_center(false),
 cliffDetected_floor(false),
-
 wheeldropped(false),
 wheeldropped_right(false),
 wheeldropped_left(false)
 
 {
 //Initializing subscribers and publishers:
-bumper_event_subscriber_ = nh_.subscribe("/mobile_base/events/bumper", 10, &SensorAct::bumperEventCB, this);
+bumper_event_subscriber_ = nh_.subscribe("mobile_base/events/bumper", 10, &SensorAct::bumperEventCB, this);
 cliff_event_subscriber_ = nh_.subscribe("mobile_base/events/cliff", 10, &SensorAct::cliffEventCB, this);
 wheel_event_subscriber_ = nh_.subscribe("mobile_base/events/wheel_drop", 10, &SensorAct::wheeldropEventCB, this);
 digitalInput_event_subsriber_ = nh_.subscribe("mobile_base/events/digital_input", 10, &SensorAct::digitalInputCB, this);
+powerSystem_event_subscriber_ = nh_.subscribe("mobile_base/events/power_system", 10, &SensorAct::powerSystemCB, this);
 cmd_vel_pub = nh_.advertise<geometry_msgs::Twist>("/cmd_vel_mux/input/teleop", 10);
 cmd_sound_pub = nh_.advertise<kobuki_msgs::Sound>("mobile_base/commands/sound", 10);
+
 
 }
 
@@ -48,11 +54,17 @@ cmd_sound_pub = nh_.advertise<kobuki_msgs::Sound>("mobile_base/commands/sound", 
   }
 //Declaring public and private variables and nodehanlders:
 public:
+//Booleans for use with bumpers:
 bool pressedBump;
+bool bumper_pressed_left;
+bool bumper_pressed_center;
+bool bumper_pressed_right;
+//Booleans for use with cliff sensors:
 bool cliffDetected_right;
 bool cliffDetected_center;
 bool cliffDetected_left;
 bool cliffDetected_floor;
+//Booleans for use with wheel drop sensors:
 bool wheeldropped_right;
 bool wheeldropped_left;
 bool wheeldropped;
@@ -68,6 +80,7 @@ ros::Subscriber bumper_event_subscriber_;
 ros::Subscriber cliff_event_subscriber_;
 ros::Subscriber digitalInput_event_subsriber_;
 ros::Subscriber wheel_event_subscriber_;
+ros::Subscriber powerSystem_event_subscriber_;
 ros::Publisher cmd_sound_pub;
 
 
@@ -94,9 +107,27 @@ ros::Publisher cmd_sound_pub;
  * @param msg sensor event
  */
      void digitalInputCB(const kobuki_msgs::DigitalInputEventConstPtr msg);
-
+/**
+ * @brief Get boolean when battery is low (15%) or critical low (5%)
+ * @param msg 
+ */
+     void powerSystemCB(const kobuki_msgs::PowerSystemEventConstPtr msg);
 
 };
+
+//Checking the powerstate of the battery:
+void SensorAct::powerSystemCB(const kobuki_msgs::PowerSystemEventConstPtr msg)
+{
+     if (msg->event == kobuki_msgs::PowerSystemEvent::BATTERY_LOW)
+     {
+          ROS_INFO_STREAM("BATTERY LOW");
+     }
+     if (msg->event == kobuki_msgs::PowerSystemEvent::BATTERY_CRITICAL)
+     {
+         ROS_INFO_STREAM("BATTERY CRITICAL LOW"); 
+     }
+
+}
 
 //Checking if bumper is pressed
 void SensorAct::bumperEventCB(const kobuki_msgs::BumperEventConstPtr msg)
@@ -106,13 +137,33 @@ void SensorAct::bumperEventCB(const kobuki_msgs::BumperEventConstPtr msg)
      if (msg->state == kobuki_msgs::BumperEvent::PRESSED)
      {    
           ROS_INFO_STREAM("Bumper PRESSED");
-          pressedBump = true;
-
-          /**Code for send sound not being used:
-          *smsg.value = 4;
-          *cmd_sound_pub.publish(smsg);
-          */
-
+          switch (msg->bumper)
+          {
+               case kobuki_msgs::BumperEvent::LEFT:
+                    if (!bumper_pressed_left)
+                    {
+                         ROS_INFO_STREAM("Bumper: LEFT");
+                         bumper_pressed_left = true;
+                         
+                    }           
+                    break;
+               case kobuki_msgs::BumperEvent::CENTER:
+                    if (!bumper_pressed_center)
+                    {
+                    ROS_INFO_STREAM("Bumper: CENTER");
+                    bumper_pressed_center = true;
+                    
+                    }
+                    break;
+               case kobuki_msgs::BumperEvent::RIGHT:
+                    if (!bumper_pressed_right)
+                    {
+                    ROS_INFO_STREAM("Bumper: RIGHT");
+                    bumper_pressed_right = true;
+                    
+                    }
+                    break;
+    }
           //Play file wav for p1-ros machine:
           //sc.playWave("/home/p1-ros/ws/src/P1/busroute/sounds/Ouch.wav", 1.0);
 
@@ -131,7 +182,12 @@ void SensorAct::bumperEventCB(const kobuki_msgs::BumperEventConstPtr msg)
      else
      {
           ROS_INFO_STREAM("Bumper RELEASED");
-          pressedBump = false;
+          switch (msg->bumper)
+          {
+               case kobuki_msgs::BumperEvent::LEFT:    bumper_pressed_left   = false; break;
+               case kobuki_msgs::BumperEvent::CENTER:  bumper_pressed_center = false; break;
+               case kobuki_msgs::BumperEvent::RIGHT:   bumper_pressed_right  = false; break;
+          }
      }
      
  
@@ -245,9 +301,21 @@ void sleepok(int t, ros::NodeHandle &nh_)
 
 void SensorAct::digitalInputCB(const kobuki_msgs::DigitalInputEventConstPtr msg)
 {
-     if (msg->values[1] == 1)
+     if (msg->values[1] == true)
      {
-          ROS_INFO_STREAM("INPUT FROM SENSOR");
+          ROS_INFO_STREAM("INPUT FROM SENSOR 1");
+     }
+     if (msg->values[2] == true)
+     {
+          ROS_INFO_STREAM("INPUT FROM SENSOR 2");
+     }
+     if (msg->values[3] == true)
+     {
+          ROS_INFO_STREAM("INPUT FROM SENSOR 3");
+     }
+     if (msg->values[0] == true)
+     {
+          ROS_INFO_STREAM("INPUT FROM SENSOR 0");
      }
 }
 
@@ -262,8 +330,9 @@ int main(int argc, char **argv) {
 
   while(ros::ok())
   {  
-
- //tjek for cliff
+     //Running loop for publishers and listeners:
+     ros::spinOnce();
+     //tjek for cliff
      if (ms.cliffDetected_center)
      {
           std::cout << "cliff center" << std::endl;
@@ -277,7 +346,7 @@ int main(int argc, char **argv) {
           }
      }
      //If bumper is pressed turtlebot will drive backwards and rotate:
-     if (ms.pressedBump)
+     if (ms.bumper_pressed_center || ms.bumper_pressed_left || ms.bumper_pressed_right)
      {    
           for (int i=0; i<5; i++)
           {
@@ -295,12 +364,14 @@ int main(int argc, char **argv) {
             ROS_INFO_STREAM("ROTATING " << i);
             ros::Duration(0.1).sleep();
           }
-          ms.pressedBump = false;
+          ms.bumper_pressed_center = false;
+          ms.bumper_pressed_left = false;
+          ms.bumper_pressed_right = false;
           //ms.vel.angular.z = 4.0;
           
      }
      //If bumper is not pressed, then drive forward:
-     if (!ms.pressedBump)
+     if (!ms.bumper_pressed_center && !ms.bumper_pressed_left && !ms.bumper_pressed_right)
      {
           ms.vel.linear.x = 0.0;
           ms.vel.angular.z = 0.0;
@@ -308,12 +379,8 @@ int main(int argc, char **argv) {
           ms.cmd_vel_pub.publish(ms.vel);
           
      }
-     //Running loop for publishers and listeners:
-     ros::spinOnce();
+     
      loop_rate.sleep();  
   }
 return 0;
 }
-
-
-
