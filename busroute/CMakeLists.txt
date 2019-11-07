@@ -108,7 +108,7 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(${catkin_INCLUDE_DIRS})
+include_directories(~/ws/src/P1/busroute/include ${catkin_INCLUDE_DIRS})
 
 ## Declare a C++ library
 # add_library(busroute
@@ -129,7 +129,7 @@ add_executable(getSensor src/getSensor.cpp)
 
 add_executable(navigation src/navigation.cpp)
 
-add_executable(auto_docking src/auto_docking.cpp)
+#add_executable(auto_docking src/auto_docking.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -152,9 +152,9 @@ target_link_libraries(navigation
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(auto_docking
-  ${catkin_LIBRARIES}
-)
+#target_link_libraries(auto_docking
+  #${catkin_LIBRARIES}
+#)
 
 #############
 ## Install ##
