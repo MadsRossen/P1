@@ -6,11 +6,13 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 
 int main(int argc, char** argv){
   ros::init(argc, argv, "simple_navigation_goals");
+  //Calling new Sensoract class:
   SensorAct sAct;
   
   //tell the action client that we want to spin a thread by default
   MoveBaseClient ac("move_base", true);
-
+  
+  
   //wait for the action server to come up
   while(!ac.waitForServer(ros::Duration(5.0))){
     ROS_INFO("Waiting for the move_base action server to come up");
@@ -30,8 +32,10 @@ int main(int argc, char** argv){
 
   ac.waitForResult();
 
+  //If we receive result and its succeded:
   if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     ROS_INFO("Hooray, the base moved 1 meter forward");
+  //if something went wrong and it did not succed:
   else
     ROS_INFO("The base failed to move forward 1 meter for some reason");
     

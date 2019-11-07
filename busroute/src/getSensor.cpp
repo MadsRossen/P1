@@ -149,28 +149,28 @@ void SensorAct::wheeldropEventCB(const kobuki_msgs::WheelDropEventConstPtr msg)
      {
           switch (msg->wheel)
           {
-          case kobuki_msgs::WheelDropEvent::LEFT:
-               if(!wheeldropped_left)
-               {
-                    ROS_WARN("left wheel dropped");
-                    wheeldropped_left = true;
-               }
-          break;
+               case kobuki_msgs::WheelDropEvent::LEFT:
+                    if(!wheeldropped_left)
+                    {
+                         ROS_WARN("left wheel dropped");
+                         wheeldropped_left = true;
+                    }
+                    break;
 
-          case kobuki_msgs::WheelDropEvent::RIGHT:
-               if(!wheeldropped_right)
-               {
-                    ROS_WARN("right wheel dropped");
-                    wheeldropped_right = true;
-               }
-          break;
-          default:
-          if(!wheeldropped)
-               {
-                    ROS_WARN("both wheels dropped");
-                    wheeldropped = true;
-               }
-          break;
+               case kobuki_msgs::WheelDropEvent::RIGHT:
+                    if(!wheeldropped_right)
+                    {
+                         ROS_WARN("right wheel dropped");
+                         wheeldropped_right = true;
+                    }
+                    break;
+               default:
+               if(!wheeldropped)
+                    {
+                         ROS_WARN("both wheels dropped");
+                         wheeldropped = true;
+                    }
+                    break;
           }
      }
      /*
