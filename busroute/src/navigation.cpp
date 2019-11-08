@@ -24,17 +24,22 @@ int main(int argc, char** argv){
   goal.target_pose.header.frame_id = "base_link";
   goal.target_pose.header.stamp = ros::Time::now();
 
-  goal.target_pose.pose.position.x = 1.0;
+  goal.target_pose.pose.position.x = 3.0;
   goal.target_pose.pose.orientation.w = 1.0;
 
 
   ROS_INFO("Sending goal");
   ac.sendGoal(goal);
+if (!sAct.bumper_pressed_center)
+{
+  ROS_INFO_STREAM("BUMPER NOT DETECTED");
+}
  if (sAct.bumper_pressed_center || sAct.bumper_pressed_left || sAct.bumper_pressed_right)
      {    
-          for (int i=0; i<5; i++)
+       ROS_INFO_STREAM("BUMPER DETECTED");
+          /*for (int i=0; i<5; i++)
           {
-            sAct.vel.linear.x = -0.0;
+            sAct.vel.linear.x = -0.5;
             sAct.vel.angular.z = 0.0;
             sAct.cmd_vel_pub.publish(sAct.vel);
             ROS_INFO_STREAM("BACKWARDS" << i);
@@ -43,7 +48,7 @@ int main(int argc, char** argv){
           for(int i=0; i<45; i++)
           {
             sAct.vel.linear.x = 0.0;
-            sAct.vel.angular.z = 0.0;
+            sAct.vel.angular.z = 1.0;
             sAct.cmd_vel_pub.publish(sAct.vel);
             ROS_INFO_STREAM("ROTATING " << i);
             ros::Duration(0.1).sleep();
@@ -52,7 +57,7 @@ int main(int argc, char** argv){
           sAct.bumper_pressed_left = false;
           sAct.bumper_pressed_right = false;
           //ms.vel.angular.z = 4.0;
-          
+          */
      }
 
   if (sAct.wheeldropped || sAct.wheeldropped_left || sAct.wheeldropped_right)
