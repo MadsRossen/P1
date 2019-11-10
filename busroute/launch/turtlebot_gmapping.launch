@@ -5,6 +5,4 @@
   <include file="$(find turtlebot_navigation)/launch/gmapping_demo.launch" />
   <node name="navigation" pkg="busroute" type="navigation" />
   <node name="$(anon rviz)" pkg="rviz" type="rviz" args="-d $(find busroute)/config/busrouting.rviz"/>
-  <param name="recovery_behavior_enabled" value="false"/>
-  <param name="clearing_rotation_allowed" value="false"/>
 </launch>
