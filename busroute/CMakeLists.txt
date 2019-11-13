@@ -4,7 +4,19 @@ project(busroute)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp geometry_msgs move_base_msgs actionlib tf)
+find_package(catkin REQUIRED COMPONENTS 
+roscpp 
+geometry_msgs 
+move_base_msgs 
+actionlib 
+tf
+ecl_threads
+ecl_geometry 
+ecl_linear_algebra 
+kobuki_msgs 
+kobuki_dock_drive 
+nav_msgs
+)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)

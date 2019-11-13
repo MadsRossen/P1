@@ -9,7 +9,7 @@
 int main(int argc, char** argv){
     ros::init(argc, argv, "auto_docking");
   // Create the client
-AutoDockingClient dc ("dock_drive_action, true");
+AutoDockingClient dc ("dock_drive_action", true);
 
   while(!dc.waitForServer(ros::Duration(5.0)))
   {
@@ -34,7 +34,7 @@ AutoDockingClient dc ("dock_drive_action, true");
     dock_state = dc.getState();
     ROS_INFO("Docking status: %s",dock_state.toString().c_str());
 
-    if (ros::Time::now() > (time+ros::Duration(10))) {
+    if (ros::Time::now() > (time+ros::Duration(1000))) {
       ROS_INFO("Docking took more than 10 seconds, canceling.");
       dc.cancelGoal();
       break;
