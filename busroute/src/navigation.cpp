@@ -2,9 +2,11 @@
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
 #include "getSensor.h"
+
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 int main(int argc, char** argv){
+  bool running = true;
   ros::init(argc, argv, "simple_navigation_goals");
   //Calling new Sensoract class:
   SensorAct sAct;
@@ -15,29 +17,36 @@ int main(int argc, char** argv){
   
   //wait for the action server to come up
   while(!ac.waitForServer(ros::Duration(5.0))){
-    ROS_INFO("Waiting for the move_base action server to come up");
+    ROS_INFO_STREAM("Waiting for the move_base action server to come up");
   }
 
   move_base_msgs::MoveBaseGoal goal;
 
   //we'll send a goal to the robot to move 1 meter forward
-  goal.target_pose.header.frame_id = "base_link";
+  goal.target_pose.header.frame_id = "odom";
   goal.target_pose.header.stamp = ros::Time::now();
 
   goal.target_pose.pose.position.x = 3.0;
   goal.target_pose.pose.orientation.w = 1.0;
 
 
-  ROS_INFO("Sending goal");
+  ROS_INFO_STREAM("Sending goal");
   ac.sendGoal(goal);
+  
 if (!sAct.bumper_pressed_center)
 {
   ROS_INFO_STREAM("BUMPER NOT DETECTED");
 }
+while (running)
+{
+ros::spinOnce();
+//If bumpers is pressed, we want to cancel goal, and get away from obstacle
+//Where we then sends the goal again.
  if (sAct.bumper_pressed_center || sAct.bumper_pressed_left || sAct.bumper_pressed_right)
-     {    
+     {
+       ac.cancelGoal();    
        ROS_INFO_STREAM("BUMPER DETECTED");
-          /*for (int i=0; i<5; i++)
+          for (int i=0; i<5; i++)
           {
             sAct.vel.linear.x = -0.5;
             sAct.vel.angular.z = 0.0;
@@ -57,24 +66,30 @@ if (!sAct.bumper_pressed_center)
           sAct.bumper_pressed_left = false;
           sAct.bumper_pressed_right = false;
           //ms.vel.angular.z = 4.0;
-          */
+          ac.sendGoal(goal);
      }
-
+//If turtlebot is tilted we want to cancel goal and send warning sound.
   if (sAct.wheeldropped || sAct.wheeldropped_left || sAct.wheeldropped_right)
   {
     ac.cancelGoal();
     ROS_INFO("Turtlebot is being lifted or tilted! Goal canceled");
 
   }
-  ac.waitForResult();
+  //ac.waitForResult();
 
   //If we receive result and its succeded:
   if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+  {
     ROS_INFO("Hooray, the base moved 1 meter forward");
+    running = false;
+  } 
   //if something went wrong and it did not succed:
-  else
+  if(ac.getState() == actionlib::SimpleClientGoalState::ABORTED)
+  {
     ROS_INFO("The base failed to move forward 1 meter for some reason");
-    
+    running = false;  
+  }
+}
 
   return 0;
 }
