@@ -62,7 +62,7 @@ class Explore
 {
 public:
   Explore();
-  ~Explore();
+   ~Explore();
 
   void start();
   void stop();

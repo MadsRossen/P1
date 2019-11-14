@@ -8,7 +8,9 @@ find_package(catkin REQUIRED COMPONENTS
 roscpp 
 geometry_msgs 
 move_base_msgs 
-actionlib 
+actionlib
+actionlib_msgs
+costmap_2d 
 tf
 ecl_threads
 ecl_geometry 
@@ -16,7 +18,34 @@ ecl_linear_algebra
 kobuki_msgs 
 kobuki_dock_drive 
 nav_msgs
+visualization_msgs
+std_msgs
+map_msgs
+geometry_msgs
 )
+
+
+catkin_package(
+  CATKIN_DEPENDS
+  roscpp 
+  geometry_msgs 
+  move_base_msgs  
+  actionlib
+  actionlib_msgs
+  costmap_2d 
+  tf
+  ecl_threads
+  ecl_geometry 
+  ecl_linear_algebra 
+  kobuki_msgs 
+  kobuki_dock_drive 
+  nav_msgs
+  visualization_msgs
+  std_msgs
+  map_msgs
+  geometry_msgs
+)
+
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -118,11 +147,22 @@ catkin_package(
 ## Build ##
 ###########
 
+# c++11 support required
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag("-std=c++11" COMPILER_SUPPORTS_CXX11)
+if(COMPILER_SUPPORTS_CXX11)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+else()
+  message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+endif()
+
+
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
 include
-getSensor
+getSensor1
+explore1
 ${catkin_INCLUDE_DIRS}
 )
 
@@ -138,13 +178,51 @@ target_link_libraries(busroute_node
 )
 
 
-add_executable(navigation src/navigation.cpp)
-add_dependencies(navigation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_executable(navigation src/navigation.cpp)
+#add_dependencies(navigation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_library(myLib src/getSensor.cpp)
-target_link_libraries(navigation
-  ${catkin_LIBRARIES}
-  myLib
+#target_link_libraries(navigation
+  #${catkin_LIBRARIES}
+  #myLib
+  #explore
+#)
+
+add_executable(explore
+  src/navigation.cpp
+  src/costmap_client.cpp
+  src/explore.cpp
+  src/frontier_search.cpp
+  
 )
+add_dependencies(explore ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(explore myLib ${catkin_LIBRARIES})
+
+#############
+## Install ##
+#############
+
+# install nodes
+install(TARGETS explore
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+# install roslaunch files
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+)
+
+
+#############
+## Testing ##
+#############
+if(CATKIN_ENABLE_TESTING)
+  find_package(roslaunch REQUIRED)
+
+  # test all launch files
+  roslaunch_add_file_check(launch)
+endif()
 
 #target_link_libraries(getSensor
   #${catkin_LIBRARIES}

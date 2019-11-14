@@ -292,9 +292,9 @@ void Explore::stop()
   ROS_INFO("Exploration stopped.");
 }
 
-}  // namespace explore
+};  // namespace explore
 
-int main(int argc, char** argv)
+/*int main(int argc, char** argv)
 {
   ros::init(argc, argv, "explore");
   if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME,
@@ -305,4 +305,4 @@ int main(int argc, char** argv)
   ros::spin();
 
   return 0;
-}
+}*/
