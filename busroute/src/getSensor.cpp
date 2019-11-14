@@ -12,8 +12,8 @@
 #include <sound_play/sound_play.h>
 #include <unistd.h>
 #include <time.h>
-#include "getSensor.h"
-
+#include <getSensor/getSensor.h>
+//#include "getSensor.h"
 //Checking the powerstate of the battery:
 void SensorAct::powerSystemCB(const kobuki_msgs::PowerSystemEventConstPtr msg)
 {

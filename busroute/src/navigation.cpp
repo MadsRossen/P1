@@ -1,7 +1,8 @@
 #include <ros/ros.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
-#include "getSensor.h"
+#include <getSensor/getSensor.h>
+//#include "getSensor.h"
 /*#include "auto_docking.cpp"*/
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
@@ -11,6 +12,7 @@ int main(int argc, char** argv){
   ros::init(argc, argv, "simple_navigation_goals");
   //Calling new Sensoract class:
   SensorAct sAct;
+  
   sound_play::SoundClient sc;
   
   //tell the action client that we want to spin a thread by default

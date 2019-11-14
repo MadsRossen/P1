@@ -48,8 +48,8 @@
 #include <ros/ros.h>
 #include <visualization_msgs/MarkerArray.h>
 
-#include <explore/costmap_client.h>
-#include <explore/frontier_search.h>
+#include <explore1/costmap_client.h>
+#include <explore1/frontier_search.h>
 
 namespace explore
 {

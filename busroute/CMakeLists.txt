@@ -120,99 +120,38 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(${catkin_INCLUDE_DIRS})
-add_library(mylib src/getSensor.cpp)
-## Declare a C++ library
-# add_library(busroute
-#   src/${PROJECT_NAME}/busroute.cpp
-# )
-
-## Add cmake target dependencies of the library
-## as an example, code may need to be generated before libraries
-## either from message generation or dynamic reconfigure
-# add_dependencies(busroute ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+include_directories(
+include
+getSensor
+${catkin_INCLUDE_DIRS}
+)
 
 ## Declare a C++ executable
-add_executable(busroute_node src/busroute.cpp)
-
-add_executable(sensortest src/sensortest.cpp)
-
 #add_executable(auto_docking src/auto_docking.cpp)
-
 #add_executable(getSensor src/getSensor.cpp)
-
-add_executable(navigation src/navigation.cpp)
-target_link_libraries(navigation mylib)
-
-## Add cmake target dependencies of the executable
-## same as for the library above
-# add_dependencies(busroute_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#target_link_libraries(navigation mylib)
 
 ## Specify libraries to link a library or executable target against
+add_executable(busroute_node src/busroute.cpp)
 target_link_libraries(busroute_node
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(sensortest
+
+add_executable(navigation src/navigation.cpp)
+add_dependencies(navigation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_library(myLib src/getSensor.cpp)
+target_link_libraries(navigation
   ${catkin_LIBRARIES}
+  myLib
 )
 
 #target_link_libraries(getSensor
   #${catkin_LIBRARIES}
 #)
 
-target_link_libraries(navigation
-  ${catkin_LIBRARIES}
-)
-
 #target_link_libraries(auto_docking
  # ${catkin_LIBRARIES}
 #)
 
-#############
-## Install ##
-#############
 
-# all install targets should use catkin DESTINATION variables
-# See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
-
-## Mark executable scripts (Python etc.) for installation
-## in contrast to setup.py, you can choose the destination
-# install(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
-
-## Mark executables and/or libraries for installation
-# install(TARGETS busroute busroute_node
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
-
-## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
-
-## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
-
-#############
-## Testing ##
-#############
-
-## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_busroute.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
-
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)

@@ -1,3 +1,6 @@
+#ifndef __GETSENSOR_H
+#define __GETSENSOR_H
+
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <iostream>
@@ -17,10 +20,10 @@
 class SensorAct
 
 {
-     
+  
 //initializing public variables:
 public:
-SensorAct() :
+SensorAct() :   
 //Declaring all booleans to be false at start.
 pressedBump(false),
 bumper_pressed_left(false),
@@ -50,7 +53,7 @@ cmd_sound_pub = nh_.advertise<kobuki_msgs::Sound>("mobile_base/commands/sound", 
 ~SensorAct()
   {
        
-  }
+  };
 //Declaring public and private variables and nodehanlders:
 public:
 //Booleans for use with bumpers:
@@ -84,7 +87,6 @@ ros::Publisher cmd_sound_pub;
 
 
 
-
 /**
    * @brief Trigger boolean when a bumper is pressed
    * @param msg bumper event
@@ -113,4 +115,4 @@ ros::Publisher cmd_sound_pub;
      void powerSystemCB(const kobuki_msgs::PowerSystemEventConstPtr msg);
 
 };
-
+#endif 

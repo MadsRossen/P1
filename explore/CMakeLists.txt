@@ -46,7 +46,14 @@ endif()
 include_directories(
   ${catkin_INCLUDE_DIRS}
   include
+  explore1
+  
 )
+#add_library(mylib 
+#src/costmap_client.cpp
+#src/explore.cpp
+#src/frontier_search.cpp
+#)
 
 add_executable(explore
   src/costmap_client.cpp

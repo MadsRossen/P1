@@ -34,7 +34,7 @@
  *
  *********************************************************************/
 
-#include <explore/costmap_client.h>
+#include <explore1/costmap_client.h>
 
 #include <functional>
 #include <mutex>
