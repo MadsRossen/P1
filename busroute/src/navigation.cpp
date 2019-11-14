@@ -71,15 +71,18 @@ ros::spinOnce();
           ac.sendGoal(goal);
      }
 //If turtlebot is tilted we want to cancel goal and send warning sound.
-  if (sAct.wheeldropped || sAct.wheeldropped_left  || sAct.wheeldropped_right)
+  if (sAct.wheeldropped)
   {
-    ac.cancelGoal();
+    sc.playWave("/home/ubu/ws/src/P1/busroute/sounds/Reee.wav", 1.0);
+    ac.cancelGoal(); 
     ROS_INFO("Turtlebot is being lifted or tilted! Goal canceled. Heading back to docking station");
-    while (sAct.wheeldropped || sAct.wheeldropped_left || sAct.wheeldropped_right){
-
-        sc.playWave("/home/ros/ws/src/P1/busroute/sounds/Reee.wav", 1.0); 
-    }
-  
+    //sAct.wheeldropped = false;
+    //sAct.wheeldropped_left = false;
+    //sAct.wheeldropped_right = false;
+    /*while (sAct.wheeldropped || sAct.wheeldropped_left || sAct.wheeldropped_right){   
+    }*/
+    sAct.wheeldropped = false;
+    
   }
   
   //ac.waitForResult();

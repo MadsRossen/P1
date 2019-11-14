@@ -70,11 +70,11 @@ void SensorAct::bumperEventCB(const kobuki_msgs::BumperEventConstPtr msg)
           int nrSound = rand() %2 + 1;
           if(nrSound == 1)
           {
-               sc.playWave("/home/ros/ws/src/P1/busroute/sounds/Ouch.wav", 1.0);
+               sc.playWave("/home/ubu/ws/src/P1/busroute/sounds/Ouch.wav", 1.0);
           }
           else
           {
-               sc.playWave("/home/ros/ws/src/P1/busroute/sounds/roblox.wav", 1.0);
+               sc.playWave("/home/ubu/ws/src/P1/busroute/sounds/roblox.wav", 1.0);
           } 
      }
      //Else we do this:
@@ -145,9 +145,9 @@ void SensorAct::cliffEventCB(const kobuki_msgs::CliffEventConstPtr msg)
 void SensorAct::wheeldropEventCB(const kobuki_msgs::WheelDropEventConstPtr msg)
 {    
      //If turtlebot wheels is dropped:
-     if (msg->state == kobuki_msgs::WheelDropEvent::LEFT || msg->state == kobuki_msgs::WheelDropEvent::RIGHT)
+     if (msg->state == kobuki_msgs::WheelDropEvent::DROPPED)
      {
-          switch (msg->wheel)
+          /*switch (msg->wheel)
           {
                case kobuki_msgs::WheelDropEvent::LEFT:
                     if(!wheeldropped_left)
@@ -171,7 +171,9 @@ void SensorAct::wheeldropEventCB(const kobuki_msgs::WheelDropEventConstPtr msg)
                          wheeldropped = true;
                     }
                     break;
-          }
+          }*/
+          wheeldropped = true;
+          
      }
    
      /*
@@ -187,6 +189,7 @@ void SensorAct::wheeldropEventCB(const kobuki_msgs::WheelDropEventConstPtr msg)
      if (msg->state == kobuki_msgs::WheelDropEvent::RAISED)
      {
           ROS_INFO_STREAM("WHEELS RAISED");
+          wheeldropped = false;
           
      }
 }  
