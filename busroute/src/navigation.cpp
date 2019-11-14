@@ -76,13 +76,8 @@ ros::spinOnce();
     sc.playWave("/home/ubu/ws/src/P1/busroute/sounds/Reee.wav", 1.0);
     ac.cancelGoal(); 
     ROS_INFO("Turtlebot is being lifted or tilted! Goal canceled. Heading back to docking station");
-    //sAct.wheeldropped = false;
-    //sAct.wheeldropped_left = false;
-    //sAct.wheeldropped_right = false;
-    /*while (sAct.wheeldropped || sAct.wheeldropped_left || sAct.wheeldropped_right){   
-    }*/
     sAct.wheeldropped = false;
-    
+
   }
   
   //ac.waitForResult();
