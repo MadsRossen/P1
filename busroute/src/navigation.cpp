@@ -2,6 +2,7 @@
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
 #include "getSensor.h"
+/*#include "auto_docking.cpp"*/
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
@@ -10,6 +11,7 @@ int main(int argc, char** argv){
   ros::init(argc, argv, "simple_navigation_goals");
   //Calling new Sensoract class:
   SensorAct sAct;
+  sound_play::SoundClient sc;
   
   //tell the action client that we want to spin a thread by default
   MoveBaseClient ac("move_base", true);
@@ -69,12 +71,17 @@ ros::spinOnce();
           ac.sendGoal(goal);
      }
 //If turtlebot is tilted we want to cancel goal and send warning sound.
-  if (sAct.wheeldropped || sAct.wheeldropped_left || sAct.wheeldropped_right)
+  if (sAct.wheeldropped || sAct.wheeldropped_left  || sAct.wheeldropped_right)
   {
     ac.cancelGoal();
-    ROS_INFO("Turtlebot is being lifted or tilted! Goal canceled");
+    ROS_INFO("Turtlebot is being lifted or tilted! Goal canceled. Heading back to docking station");
+    while (sAct.wheeldropped || sAct.wheeldropped_left || sAct.wheeldropped_right){
 
+        sc.playWave("/home/ros/ws/src/P1/busroute/sounds/Reee.wav", 1.0); 
+    }
+  
   }
+  
   //ac.waitForResult();
 
   //If we receive result and its succeded:

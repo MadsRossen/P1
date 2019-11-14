@@ -70,11 +70,11 @@ void SensorAct::bumperEventCB(const kobuki_msgs::BumperEventConstPtr msg)
           int nrSound = rand() %2 + 1;
           if(nrSound == 1)
           {
-               sc.playWave("/home/ubu/ws/src/P1/busroute/sounds/Ouch.wav", 1.0);
+               sc.playWave("/home/ros/ws/src/P1/busroute/sounds/Ouch.wav", 1.0);
           }
           else
           {
-               sc.playWave("/home/ubu/ws/src/P1/busroute/sounds/roblox.wav", 1.0);
+               sc.playWave("/home/ros/ws/src/P1/busroute/sounds/roblox.wav", 1.0);
           } 
      }
      //Else we do this:
@@ -173,6 +173,7 @@ void SensorAct::wheeldropEventCB(const kobuki_msgs::WheelDropEventConstPtr msg)
                     break;
           }
      }
+   
      /*
      if (msg->state == kobuki_msgs::WheelDropEvent::DROPPED)
      {
@@ -188,7 +189,8 @@ void SensorAct::wheeldropEventCB(const kobuki_msgs::WheelDropEventConstPtr msg)
           ROS_INFO_STREAM("WHEELS RAISED");
           
      }
-}
+}  
+
 //A sleep function not curently being used:
 void sleepok(int t, ros::NodeHandle &nh_)
 {
