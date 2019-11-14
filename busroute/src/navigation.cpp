@@ -1,10 +1,16 @@
 #include <ros/ros.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
+#include <geometry_msgs/Twist.h>   /*subscribers=/mobile_base_nodelet_manager*/
 #include "getSensor.h"
 /*#include "auto_docking.cpp"*/
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
+
+ros::Subscriber mobile_base_nodelet_manager; /*subscribers=/mobile_base_nodelet_manager   
+Bruges til velosity og  af robotten link http://wiki.ros.org/kobuki/Tutorials/Kobuki%27s%20Control%20System
+*/
+#include "getSensor.h"
 
 int main(int argc, char** argv){
   bool running = true;
