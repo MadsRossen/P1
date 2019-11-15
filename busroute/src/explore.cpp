@@ -283,6 +283,7 @@ void Explore::reachedGoal(const actionlib::SimpleClientGoalState& status,
 void Explore::start()
 {
   exploring_timer_.start();
+  
 }
 
 void Explore::stop()
@@ -290,6 +291,7 @@ void Explore::stop()
   move_base_client_.cancelAllGoals();
   exploring_timer_.stop();
   ROS_INFO("Exploration stopped.");
+  stopped = false;
 }
 
 };  // namespace explore

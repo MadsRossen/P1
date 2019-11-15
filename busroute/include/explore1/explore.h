@@ -66,6 +66,7 @@ public:
 
   void start();
   void stop();
+ 
 
 private:
   /**
@@ -108,6 +109,8 @@ private:
   double potential_scale_, orientation_scale_, gain_scale_;
   ros::Duration progress_timeout_;
   bool visualize_;
+  public:
+  bool stopped = true;
 };
 }
 
