@@ -292,6 +292,7 @@ void Explore::stop()
   exploring_timer_.stop();
   ROS_INFO("Exploration stopped.");
   stopped = false;
+  
 }
 
 };  // namespace explore

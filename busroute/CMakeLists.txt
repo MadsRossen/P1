@@ -163,6 +163,7 @@ include_directories(
 include
 getSensor1
 explore1
+task1
 ${catkin_INCLUDE_DIRS}
 )
 

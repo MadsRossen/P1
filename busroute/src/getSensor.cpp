@@ -222,3 +222,15 @@ void SensorAct::digitalInputCB(const kobuki_msgs::DigitalInputEventConstPtr msg)
           ROS_INFO_STREAM("INPUT FROM SENSOR 0");
      }
 }
+
+void SensorAct::mapSizeCB(const nav_msgs::MapMetaDataConstPtr msg)
+{
+     map_size_y_ = msg->height;
+     map_size_x_ = msg->width;
+     map_res_ = msg->resolution;
+
+     map_size_x_ = map_size_x_ * map_res_;
+     map_size_y_ = map_size_y_ * map_res_;
+
+
+}

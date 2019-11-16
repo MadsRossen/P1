@@ -9,7 +9,7 @@
 int main(int argc, char** argv){
     ros::init(argc, argv, "auto_docking");
   // Create the client
-AutoDockingClient dc ("dock_drive_action", true);
+    AutoDockingClient dc ("dock_drive_action", true);
 
   while(!dc.waitForServer(ros::Duration(5.0)))
   {

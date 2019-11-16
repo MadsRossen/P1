@@ -3,10 +3,11 @@
 #include <actionlib/client/simple_action_client.h>
 #include <getSensor1/getSensor.h>
 #include <explore1/explore.h>
-//#include "getSensor.h"
-/*#include "auto_docking.cpp"*/
+//#include <kobuki_msgs/AutoDockingAction.h>
+
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
+//typedef actionlib::SimpleActionClient<kobuki_msgs::AutoDockingAction> AutoDockingClient;
 
 int main(int argc, char** argv){
   bool runningnav = false;
@@ -14,10 +15,25 @@ int main(int argc, char** argv){
   bool running = false;
 
   ros::init(argc, argv, "explore");
-  //Calling new Sensoract class:
+  // Calling new Sensoract class:
   SensorAct sAct;
-  explore::Explore explore;
+  // Calling new explore class:
+  
+  // Create the soundClient:
   sound_play::SoundClient sc;
+  explore::Explore explore;
+ //tell the clients that we want to spin a thread by default
+  
+  //AutoDockingClient dc ("dock_drive_action", true);
+
+   // Create docking goal object:
+  //kobuki_msgs::AutoDockingGoal dockGoal;
+
+  // Assign the docking initial state:
+  //actionlib::SimpleClientGoalState dock_state = actionlib::SimpleClientGoalState::LOST;
+
+
+//This while loop should not be necessary, but it need to be tested
 while (runningexp)
 {
   
@@ -36,7 +52,9 @@ if (!sAct.bumper_pressed_center)
 {
   ROS_INFO_STREAM("BUMPER NOT DETECTED");
 }
-    //tell the action client that we want to spin a thread by default
+
+  ROS_INFO_STREAM(sAct.map_size_x_);
+  ROS_INFO_STREAM(sAct.map_size_y_);  
     MoveBaseClient ac("move_base", true);
      //wait for the action server to come up
     while(!ac.waitForServer(ros::Duration(5.0))){
@@ -46,6 +64,7 @@ if (!sAct.bumper_pressed_center)
   move_base_msgs::MoveBaseGoal goal;
 
   //we'll send a goal to the robot to move 1 meter forward
+  //We need to figure out what the frame_id is, base_link, /map or /odom ??
   goal.target_pose.header.frame_id = "base_link";
   goal.target_pose.header.stamp = ros::Time::now();
 
