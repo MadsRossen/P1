@@ -73,7 +73,7 @@ bool wheeldropped_right;
 bool wheeldropped_left;
 bool wheeldropped;
 // Variables used for map size:
-unsigned int map_res_;
+int map_res_;
 unsigned int map_size_x_, map_size_y_;
 
 
@@ -124,7 +124,7 @@ ros::Subscriber map_metaData_subscriber_;
  * @brief Get the basic information about the loaded map 
  * @param msg 
  */
-     void mapSizeCB(const nav_msgs::OccupancyGridConstPtr msg);
+     void mapSizeCB(const nav_msgs::MapMetaDataConstPtr msg);
 
 };
 #endif 
