@@ -111,6 +111,7 @@ private:
   bool visualize_;
   public:
   bool stopped = true;
+  
 };
 }
 

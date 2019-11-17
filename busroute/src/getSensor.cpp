@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <getSensor1/getSensor.h>
+#include <nav_msgs/OccupancyGrid.h>
 //#include "getSensor.h"
 //Checking the powerstate of the battery:
 void SensorAct::powerSystemCB(const kobuki_msgs::PowerSystemEventConstPtr msg)
@@ -223,14 +224,16 @@ void SensorAct::digitalInputCB(const kobuki_msgs::DigitalInputEventConstPtr msg)
      }
 }
 
-void SensorAct::mapSizeCB(const nav_msgs::MapMetaDataConstPtr msg)
+void SensorAct::mapSizeCB(const nav_msgs::OccupancyGridConstPtr msg)
 {
-     map_size_y_ = msg->height;
-     map_size_x_ = msg->width;
-     map_res_ = msg->resolution;
+     
+     map_size_y_ = msg->info.height;
+     map_size_x_ = msg->info.width;
+     map_res_ = msg->info.resolution;
 
-     map_size_x_ = map_size_x_ * map_res_;
-     map_size_y_ = map_size_y_ * map_res_;
+
+     //map_size_x_ = map_size_x_ * map_res_;
+     //map_size_y_ = map_size_y_ * map_res_;
 
 
 }

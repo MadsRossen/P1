@@ -23,7 +23,7 @@ int main(int argc, char** argv){
   sound_play::SoundClient sc;
   explore::Explore explore;
  //tell the clients that we want to spin a thread by default
-  
+  MoveBaseClient ac("move_base", true);
   //AutoDockingClient dc ("dock_drive_action", true);
 
    // Create docking goal object:
@@ -34,6 +34,7 @@ int main(int argc, char** argv){
 
 
 //This while loop should not be necessary, but it need to be tested
+
 while (runningexp)
 {
   
@@ -54,8 +55,9 @@ if (!sAct.bumper_pressed_center)
 }
 
   ROS_INFO_STREAM(sAct.map_size_x_);
-  ROS_INFO_STREAM(sAct.map_size_y_);  
-    MoveBaseClient ac("move_base", true);
+  ROS_INFO_STREAM(sAct.map_size_y_);
+  ROS_INFO_STREAM(sAct.map_res_);
+    
      //wait for the action server to come up
     while(!ac.waitForServer(ros::Duration(5.0))){
       ROS_INFO_STREAM("Waiting for the move_base action server to come up");
@@ -65,11 +67,11 @@ if (!sAct.bumper_pressed_center)
 
   //we'll send a goal to the robot to move 1 meter forward
   //We need to figure out what the frame_id is, base_link, /map or /odom ??
-  goal.target_pose.header.frame_id = "base_link";
+  goal.target_pose.header.frame_id = "/map";
   goal.target_pose.header.stamp = ros::Time::now();
 
-  goal.target_pose.pose.position.x = 1.0;
-  goal.target_pose.pose.position.y = 0.0;
+  goal.target_pose.pose.position.x = 0.5;
+  goal.target_pose.pose.position.y = 0.5;
   goal.target_pose.pose.orientation.w = 1.0;
 
   ROS_INFO_STREAM("Sending goal");
@@ -133,6 +135,7 @@ if (!sAct.bumper_pressed_center)
     runningnav = false;
   }
 }
+ros::spinOnce();
 }
 
   return 0;

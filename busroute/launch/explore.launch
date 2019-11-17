@@ -2,12 +2,14 @@
 
 <launch>
   <include file="$(find turtlebot_bringup)/launch/minimal.launch" />
-  <include file="$(find turtlebot_navigation)/launch/gmapping_demo.launch" />
+  <include file="$(find turtlebot_navigation)/launch/gmapping_demo.launch"/>
+    <param name="move_base/global_costmap/global_frame" value="/map"/>
+  <node name="$(anon rviz)" pkg="rviz" type="rviz" args="-d $(find busroute)/config/busrouting.rviz"/>
   <include file="$(find kobuki_auto_docking)/launch/minimal.launch" />
   <node name="soundplay" pkg="sound_play" type="soundplay_node.py" />
 <node pkg="busroute" type="explore" name="explore" output="screen">
   <param name="robot_base_frame" value="base_link"/>
-  <param name="costmap_topic" value="map"/>
+  <param name="costmap_topic" value="/map"/>
   <param name="costmap_updates_topic" value="map_updates"/>
   <param name="visualize" value="true"/>
   <param name="planner_frequency" value="0.33"/>
@@ -18,5 +20,4 @@
   <param name="transform_tolerance" value="0.3"/>
   <param name="min_frontier_size" value="0.75"/>
 </node>
-<node name="$(anon rviz)" pkg="rviz" type="rviz" args="-d $(find busroute)/config/busrouting.rviz"/>
 </launch>

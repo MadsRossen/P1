@@ -20,4 +20,6 @@
   <param name="min_frontier_size" value="0.75"/>
 </node>
 <node name="$(anon rviz)" pkg="rviz" type="rviz" args="-d $(find busroute)/config/busrouting.rviz"/>
+ <arg name="map_file" default="$(find busroute)map/my_map.yaml"/>
+<node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)"/>
 </launch>

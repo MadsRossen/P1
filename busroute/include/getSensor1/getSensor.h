@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <nav_msgs/MapMetaData.h>
+#include <nav_msgs/OccupancyGrid.h>
 
 //Class for all the functions:
 class SensorAct
@@ -47,7 +48,7 @@ digitalInput_event_subsriber_ = nh_.subscribe("mobile_base/events/digital_input"
 powerSystem_event_subscriber_ = nh_.subscribe("mobile_base/events/power_system", 10, &SensorAct::powerSystemCB, this);
 cmd_vel_pub = nh_.advertise<geometry_msgs::Twist>("/cmd_vel_mux/input/teleop", 10);
 cmd_sound_pub = nh_.advertise<kobuki_msgs::Sound>("mobile_base/commands/sound", 10);
-map_metaData_subscriber_ = nh_.subscribe("nav_msgs/MapMetaData", 10, &SensorAct::mapSizeCB, this);
+map_metaData_subscriber_ = nh_.subscribe("map_metadata", 10, &SensorAct::mapSizeCB, this);
 
 }
 
@@ -123,7 +124,7 @@ ros::Subscriber map_metaData_subscriber_;
  * @brief Get the basic information about the loaded map 
  * @param msg 
  */
-     void mapSizeCB(const nav_msgs::MapMetaDataConstPtr msg);
+     void mapSizeCB(const nav_msgs::OccupancyGridConstPtr msg);
 
 };
 #endif 

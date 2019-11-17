@@ -115,9 +115,11 @@ Costmap2DClient::Costmap2DClient(ros::NodeHandle& param_nh,
 void Costmap2DClient::updateFullMap(const nav_msgs::OccupancyGrid::ConstPtr& msg)
 {
   global_frame_ = msg->header.frame_id;
-
+  
   unsigned int size_in_cells_x = msg->info.width;
   unsigned int size_in_cells_y = msg->info.height;
+  size_meter_x_ = msg->info.width;
+  size_meter_y_ = msg->info.height;
   double resolution = msg->info.resolution;
   double origin_x = msg->info.origin.position.x;
   double origin_y = msg->info.origin.position.y;

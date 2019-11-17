@@ -50,6 +50,8 @@ namespace explore
 class Costmap2DClient
 {
 public:
+  //Added by Kaj
+  unsigned int size_meter_x_, size_meter_y_;
   /**
    * @brief Contructs client and start listening
    * @details Constructor will block until first map update is received and
