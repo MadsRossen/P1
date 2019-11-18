@@ -6,6 +6,16 @@
 //#include <kobuki_msgs/AutoDockingAction.h>
 
 
+/*
+Here we do all the action. We include these packages
+The getSensor library (Our own library)
+The explore_lite package (Package for autonomous mapping)
+The Autodocking package (Package for autonomous docking)
+The MoveBase action package (Package for sending commands to movebase)
+The simple_action_client package (Package for starting the action client)
+*/
+
+
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 //typedef actionlib::SimpleActionClient<kobuki_msgs::AutoDockingAction> AutoDockingClient;
 

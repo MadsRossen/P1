@@ -18,6 +18,11 @@
 #include <nav_msgs/MapMetaData.h>
 #include <nav_msgs/OccupancyGrid.h>
 
+/*
+Here we declare the necessary subscribers
+publishers, nodehandlers and variables that we will use in getSensor.cpp  
+*/
+
 //Class for all the functions:
 class SensorAct
 
@@ -48,7 +53,7 @@ digitalInput_event_subsriber_ = nh_.subscribe("mobile_base/events/digital_input"
 powerSystem_event_subscriber_ = nh_.subscribe("mobile_base/events/power_system", 10, &SensorAct::powerSystemCB, this);
 cmd_vel_pub = nh_.advertise<geometry_msgs::Twist>("/cmd_vel_mux/input/teleop", 10);
 cmd_sound_pub = nh_.advertise<kobuki_msgs::Sound>("mobile_base/commands/sound", 10);
-map_metaData_subscriber_ = nh_.subscribe("map_metadata", 10, &SensorAct::mapSizeCB, this);
+map_metaData_subscriber_ = nh_.subscribe("move_base/local_costmap/costmap", 10, &SensorAct::mapSizeCB, this);
 
 }
 
@@ -73,7 +78,7 @@ bool wheeldropped_right;
 bool wheeldropped_left;
 bool wheeldropped;
 // Variables used for map size:
-int map_res_;
+double map_res_;
 unsigned int map_size_x_, map_size_y_;
 
 
@@ -124,7 +129,7 @@ ros::Subscriber map_metaData_subscriber_;
  * @brief Get the basic information about the loaded map 
  * @param msg 
  */
-     void mapSizeCB(const nav_msgs::MapMetaDataConstPtr msg);
+     void mapSizeCB(const nav_msgs::OccupancyGridConstPtr msg);
 
 };
 #endif 
