@@ -23,6 +23,7 @@ std_msgs
 map_msgs
 geometry_msgs
 )
+find_package(OpenCV 2 REQUIRED)
 
 
 catkin_package(
@@ -194,7 +195,10 @@ add_executable(explore
   src/explore.cpp
   src/frontier_search.cpp
   
+  
 )
+add_executable(color src/color.cpp)
+
 add_dependencies(explore ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(explore myLib ${catkin_LIBRARIES})
 
