@@ -21,14 +21,16 @@ nav_msgs
 visualization_msgs
 std_msgs
 map_msgs
-geometry_msgs
 sensor_msgs
 cv_bridge
 image_transport
-
+rospy
 )
+
+
+#find_package(OpenCV REQUIRED)
 find_package(OpenCV REQUIRED)
-find_package(OpenCV 2 REQUIRED)
+
 
 
 catkin_package(
@@ -184,10 +186,10 @@ include_directories(${OpenCV_INCLUDE_DIR})
 #target_link_libraries(navigation mylib)
 
 ## Specify libraries to link a library or executable target against
-add_executable(busroute_node src/busroute.cpp)
-target_link_libraries(busroute_node
-  ${catkin_LIBRARIES}
-)
+#add_executable(busroute_node src/busroute.cpp)
+#target_link_libraries(busroute_node
+  #${catkin_LIBRARIES}
+#)
 
 #add_executable(navigation src/navigation.cpp)
 #add_dependencies(navigation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -198,8 +200,11 @@ add_library(myLib src/getSensor.cpp)
   #explore
 #)
 
-add_executable(color_detect src/color.cpp)
-target_link_libraries(color_detect ${catkin_LIBRARIES}${OpenCV_LIBS})
+add_executable(color_detect
+src/color.cpp
+)
+#add_dependencies(color ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(color_detect myLib ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 add_executable(explore
   src/navigation.cpp
@@ -207,9 +212,10 @@ add_executable(explore
   src/explore.cpp
   src/frontier_search.cpp
   
+  
 )
 add_dependencies(explore ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(explore myLib ${catkin_LIBRARIES})
+target_link_libraries(explore myLib ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 
 
@@ -219,6 +225,11 @@ target_link_libraries(explore myLib ${catkin_LIBRARIES})
 
 # install nodes
 install(TARGETS explore
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+install(TARGETS color_detect
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

@@ -71,6 +71,7 @@
   <depend>sensor_msgs</depend>
   <depend>cv_bridge</depend>
   <depend>image_transport</depend>
+  <depend>rospy</depend>
 
   <test_depend>roslaunch</test_depend>
 </package>
