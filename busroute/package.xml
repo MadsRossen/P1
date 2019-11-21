@@ -68,6 +68,9 @@
   <depend>ecl_linear_algebra</depend>
   <depend>kobuki_msgs</depend>
   <depend>kobuki_dock_drive</depend>
+  <depend>sensor_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>image_transport</depend>
 
   <test_depend>roslaunch</test_depend>
 </package>
