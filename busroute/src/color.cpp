@@ -27,8 +27,6 @@ public:
     image_sub_ = it_.subscribe("/camera/rgb/image_raw", 1,
       &ImageConverter::imageCb, this);
     image_pub_ = it_.advertise("/image_converter/output_video", 1);
-
-    cv::namedWindow(OPENCV_WINDOW);
   }
 
   }
