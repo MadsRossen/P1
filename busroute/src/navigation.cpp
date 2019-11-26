@@ -3,7 +3,8 @@
 #include <actionlib/client/simple_action_client.h>
 #include <getSensor1/getSensor.h>
 #include <explore1/explore.h>
-#include <geometry_msgs/Twist.h>   
+#include <geometry_msgs/Twist.h>
+#include <color/color.h>  
 //#include <kobuki_msgs/AutoDockingAction.h>
 
 /*
@@ -91,7 +92,7 @@ if (!sAct.bumper_pressed_center)
   ros::spinOnce();
 //If bumpers is pressed, we want to cancel goal, and get away from obstacle
 //Where we then sends the goal again.
- if (sAct.bumper_pressed_center || sAct.bumper_pressed_left || sAct.bumper_pressed_right)
+ if (sAct.bumper_pressed_center || sAct.bumper_pressed_left || sAct.bumper_pressed_right )
      {
        ac.cancelGoal();    
        ROS_INFO_STREAM("BUMPER DETECTED");
@@ -116,6 +117,7 @@ if (!sAct.bumper_pressed_center)
           sAct.bumper_pressed_right = false;
           //ms.vel.angular.z = 4.0;
           ac.sendGoal(goal);
+
      }
 //If turtlebot is tilted we want to cancel goal and send warning sound.
   if (sAct.wheeldropped)

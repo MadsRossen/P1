@@ -1,35 +1,6 @@
-#include <ros/ros.h>
-#include <image_transport/image_transport.h>
-#include <cv_bridge/cv_bridge.h>
-#include <sensor_msgs/image_encodings.h>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/highgui/highgui.hpp>
+#include <color/color.h>
 
-static const std::string OPENCV_WINDOW = "Image window";
-static const std::string OPENCV_WINDOW_ORIGINAL = "Original Image window";
-static const std::string OPENCV_WINDOW_UNCROPPED = "Image window uncropped";
-
-
-
-class ImageConverter
-{
-  ros::NodeHandle nh_;
-  image_transport::ImageTransport imageTransport_;
-  image_transport::Subscriber image_sub_;
-  image_transport::Publisher image_pub_;
-
-
-public:
-  ImageConverter()
-    : imageTransport_(nh_)
-  {
-    // Subscrive to input video feed and publish output video feed
-    image_sub_ = imageTransport_.subscribe("/camera/rgb/image_raw", 1, &ImageConverter::imageCb, this);
-    //image_pub_ = imageTransport _.advertise("/image_converter/output_video", 1);
-
-  }
-
-  void imageCb(const sensor_msgs::ImageConstPtr& msg)
+void imageCb(const sensor_msgs::ImageConstPtr& msg)
   {
     cv_bridge::CvImagePtr cvImage;
     try
@@ -112,16 +83,14 @@ public:
     cv::waitKey(3);
 
     // Output modified video stream
-    image_pub_.publish(cvImage->toImageMsg());
+    //image_pub_.publish(cvImage->toImageMsg());
 
     
   }
-};
-
-int main(int argc, char** argv)
+/*int main(int argc, char** argv)
 {
   ros::init(argc, argv, "image_converter");
   ImageConverter ic;
   ros::spin();
   return 0;
-}
+}*/

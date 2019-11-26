@@ -175,6 +175,7 @@ include
 getSensor1
 explore1
 task1
+color
 ${catkin_INCLUDE_DIRS}
 
 )
@@ -200,17 +201,19 @@ add_library(myLib src/getSensor.cpp)
   #explore
 #)
 
-add_executable(color_detect
-src/color.cpp
-)
+#add_executable(color_detect
+#src/color.cpp
+#)
 #add_dependencies(color ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(color_detect myLib ${catkin_LIBRARIES} ${OpenCV_LIBS})
+#target_link_libraries(color_detect myLib ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 add_executable(explore
   src/navigation.cpp
   src/costmap_client.cpp
   src/explore.cpp
   src/frontier_search.cpp
+  src/color.cpp
+
   
   
 )
@@ -229,11 +232,11 @@ install(TARGETS explore
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
-install(TARGETS color_detect
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+#install(TARGETS color_detect
+  #ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  #LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  #RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+#)
 
 # install roslaunch files
 install(DIRECTORY launch/

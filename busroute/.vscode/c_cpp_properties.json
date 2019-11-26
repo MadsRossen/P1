@@ -8,7 +8,8 @@
             "includePath": [
                 "/opt/ros/kinetic/include/**",
                 "/usr/include/**",
-                "/home/ros/ws/src/P1/busroute/include/**"
+                "/home/ros/ws/src/P1/busroute/include/**",
+                "/home/ubu/ws/src/P1/busroute/include/**"
             ],
             "name": "ROS",
             "intelliSenseMode": "gcc-x64",
