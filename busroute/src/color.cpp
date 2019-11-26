@@ -41,7 +41,7 @@ public:
       ROS_ERROR("cv_bridge exception: %s", e.what());
       return;
     }
-  
+    // shelf is used for testing in 
     int shelfLowerB = 30;
     int shelfLowerG = 80;
     int shelfLowerR = 160;
@@ -50,26 +50,26 @@ public:
     int shelfUpperR = 220; 
 
     
-    int blueLowerB = 220;
+    int blueLowerB = 50;
     int blueLowerG = 0;
     int blueLowerR = 0;
-    int blueUpperB = 255;
-    int blueUpperG = 30;
-    int blueUpperR = 30; 
+    int blueUpperB = 110;
+    int blueUpperG = 20;
+    int blueUpperR = 25; 
 
     int greenLowerB = 0;
-    int greenLowerG = 220;
+    int greenLowerG = 30;
     int greenLowerR = 0;
-    int greenUpperB = 30;
-    int greenUpperG = 255;
-    int greenUpperR = 30; 
+    int greenUpperB = 45;
+    int greenUpperG = 80;
+    int greenUpperR = 25; 
 
     int redLowerB = 0;
     int redLowerG = 0;
-    int redLowerR = 220;
-    int redUpperB = 30;
-    int redUpperG = 30;
-    int redUpperR = 255; 
+    int redLowerR = 100;
+    int redUpperB = 25 ;
+    int redUpperG = 10;
+    int redUpperR = 160; 
     
 
 
@@ -85,19 +85,25 @@ public:
     mask = maskBlue + maskGreen + maskRed;
   
     cv::inRange(cvImage->image, cv::Scalar(shelfLowerB,shelfLowerG,shelfLowerR), cv::Scalar(shelfUpperB,shelfUpperG,shelfUpperR), maskShelf);
-    part = maskShelf(cv::Range(400,480),cv::Range(0,640));
+    part = mask(cv::Range(400,480),cv::Range(200,465));
 
     cv::namedWindow(OPENCV_WINDOW,600);
     cv::imshow(OPENCV_WINDOW, part);
-    cv::imshow(OPENCV_WINDOW_UNCROPPED, maskShelf);
+    cv::imshow(OPENCV_WINDOW_UNCROPPED, mask);
     int whitePixels = cv::countNonZero(part);
     
     //std::cout << whitePixels << std::endl;
-
-    if (whitePixels >= 48000)
+    bool trashDetected;
+    if (whitePixels >= 3000 && trashDetected == false)
     {
-      std::cout << "shelf detected" << std::endl;
+      std::cout << "trash detected" << std::endl;
+      trashDetected = true;
     }
+    if (whitePixels < 200)
+    {
+      trashDetected = false;
+    }
+
 
     cv::waitKey(3);
 
