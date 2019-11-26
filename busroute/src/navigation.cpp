@@ -32,6 +32,8 @@ int main(int argc, char** argv){
   // Create the soundClient:
   sound_play::SoundClient sc;
   explore::Explore explore;
+  ImageConverter img;
+
  //tell the clients that we want to spin a thread by default
   MoveBaseClient ac("move_base", true);
   //AutoDockingClient dc ("dock_drive_action", true);

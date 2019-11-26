@@ -13,7 +13,7 @@ static const std::string OPENCV_WINDOW_UNCROPPED = "Image window uncropped";
 
 class ImageConverter
 {
-  
+  public:
   ImageConverter():
   imageTransport_(nh_)
   {
