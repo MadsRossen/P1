@@ -3,8 +3,8 @@
 #include <actionlib/client/simple_action_client.h>
 #include <getSensor1/getSensor.h>
 #include <explore1/explore.h>
+#include <geometry_msgs/Twist.h>   
 //#include <kobuki_msgs/AutoDockingAction.h>
-
 
 /*
 Here we do all the action. We include these packages
@@ -15,17 +15,8 @@ The MoveBase action package (Package for sending commands to movebase)
 The simple_action_client package (Package for starting the action client)
 */
 
-#include <geometry_msgs/Twist.h>   /*subscribers=/mobile_base_nodelet_manager*/
-
-/*#include "auto_docking.cpp"*/
-
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 //typedef actionlib::SimpleActionClient<kobuki_msgs::AutoDockingAction> AutoDockingClient;
-
-ros::Subscriber mobile_base_nodelet_manager; /*subscribers=/mobile_base_nodelet_manager   
-Bruges til velosity og  af robotten link http://wiki.ros.org/kobuki/Tutorials/Kobuki%27s%20Control%20System
-*/
-#include "getSensor.h"
 
 int main(int argc, char** argv){
   bool runningnav = false;
