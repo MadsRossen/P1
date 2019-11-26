@@ -1,6 +1,6 @@
 #include <color/color.h>
 
-void imageCb(const sensor_msgs::ImageConstPtr& msg)
+void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
   {
     cv_bridge::CvImagePtr cvImage;
     try
