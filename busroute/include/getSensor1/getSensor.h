@@ -53,7 +53,7 @@ digitalInput_event_subsriber_ = nh_.subscribe("mobile_base/events/digital_input"
 powerSystem_event_subscriber_ = nh_.subscribe("mobile_base/events/power_system", 10, &SensorAct::powerSystemCB, this);
 cmd_vel_pub = nh_.advertise<geometry_msgs::Twist>("/cmd_vel_mux/input/teleop", 10);
 cmd_sound_pub = nh_.advertise<kobuki_msgs::Sound>("mobile_base/commands/sound", 10);
-map_metaData_subscriber_ = nh_.subscribe("move_base/local_costmap/costmap", 10, &SensorAct::mapSizeCB, this);
+map_metaData_subscriber_ = nh_.subscribe("move_base/global_costmap/costmap", 10, &SensorAct::mapSizeCB, this);
 
 }
 
@@ -80,6 +80,7 @@ bool wheeldropped;
 // Variables used for map size:
 double map_res_;
 unsigned int map_size_x_, map_size_y_;
+int costMap[];
 
 
 geometry_msgs::Twist vel;

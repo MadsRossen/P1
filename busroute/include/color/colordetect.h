@@ -5,9 +5,7 @@
 #include "opencv2/opencv.hpp"
 #include "ros/ros.h"
 
-static const std::string OPENCV_WINDOW = "Image window";
-static const std::string OPENCV_WINDOW_ORIGINAL = "Original Image window";
-static const std::string OPENCV_WINDOW_UNCROPPED = "Image window uncropped";
+
 /**
 *@brief Line Detect class contains all the functions for image procesing and direction publishing
 */
@@ -36,6 +34,8 @@ public:
     cv::Mat img_mask;
     ros::Subscriber imgSub;
     ros::NodeHandle nhh;
+    std::string OPENCV_WINDOW_ORIGINAL = "Original Image window";
+
 
 public:
     /**

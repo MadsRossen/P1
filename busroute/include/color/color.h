@@ -5,12 +5,6 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-static const std::string OPENCV_WINDOW = "Image window";
-static const std::string OPENCV_WINDOW_ORIGINAL = "Original Image window";
-static const std::string OPENCV_WINDOW_UNCROPPED = "Image window uncropped";
-
-
-
 class ImageConverter
 {
   public:
@@ -31,6 +25,10 @@ ros::NodeHandle nh_;
   image_transport::ImageTransport imageTransport_;
   image_transport::Subscriber image_sub_;
   image_transport::Publisher image_pub_;
+  std::string OPENCV_WINDOW = "Image window";
+  std::string OPENCV_WINDOW_ORIGINAL = "Original Image window";
+  std::string OPENCV_WINDOW_UNCROPPED = "Image window uncropped";
+
 
 
 void imageCb(const sensor_msgs::ImageConstPtr& msg);

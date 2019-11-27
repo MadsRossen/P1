@@ -5,7 +5,7 @@
 #include <explore1/explore.h>
 #include <geometry_msgs/Twist.h>
 #include <color/colordetect.h> 
-#include <color/color.h>
+//#include <color/color.h>
 #include <opencv2/highgui/highgui.hpp>
 #include "opencv2/opencv.hpp"
 #include <cv_bridge/cv_bridge.h>
@@ -37,8 +37,8 @@ int main(int argc, char **argv){
   
   // Create the soundClient:
   sound_play::SoundClient sc;
-  //explore::Explore explore;
-  LineDetect det;
+  explore::Explore explore;
+  //LineDetect det;
   //ImageConverter imgcon;
  //tell the clients that we want to spin a thread by default
   MoveBaseClient ac("move_base", true);
@@ -53,7 +53,7 @@ int main(int argc, char **argv){
 
 //This while loop should not be necessary, but it need to be tested
 
-/*while (runningexp)
+while (runningexp)
 {
   
   if (!explore.stopped)
@@ -64,9 +64,9 @@ int main(int argc, char **argv){
     running = true;
   }
   ros::spinOnce();
-}*/
-runningnav = true;
-running = true;
+}
+//runningnav = true;
+//running = true;
 while (runningnav)
 {
 if (!sAct.bumper_pressed_center)
@@ -77,7 +77,10 @@ if (!sAct.bumper_pressed_center)
   ROS_INFO_STREAM(sAct.map_size_x_);
   ROS_INFO_STREAM(sAct.map_size_y_);
   ROS_INFO_STREAM(sAct.map_res_);
-    
+   for (int i=0; i<100; i++ )
+     {
+          ROS_INFO_STREAM(sAct.costMap[i]);
+     }
      //wait for the action server to come up
     while(!ac.waitForServer(ros::Duration(5.0))){
       ROS_INFO_STREAM("Waiting for the move_base action server to come up");
@@ -87,7 +90,7 @@ if (!sAct.bumper_pressed_center)
 
   //we'll send a goal to the robot to move 1 meter forward
   //We need to figure out what the frame_id is, base_link, /map or /odom ??
-  goal.target_pose.header.frame_id = "/map";
+  goal.target_pose.header.frame_id = "map";
   goal.target_pose.header.stamp = ros::Time::now();
 
   goal.target_pose.pose.position.x = 0.5;
@@ -99,11 +102,11 @@ if (!sAct.bumper_pressed_center)
   
   while (running)
 {
-  if (!det.img.empty()) {
+  /*if (!det.img.empty()) {
             // Perform image processing
             det.img_filt = det.Gauss(det.img);
             det.colorthresh(det.img_filt);
-            }
+            }*/
   ros::spinOnce();
 //If bumpers is pressed, we want to cancel goal, and get away from obstacle
 //Where we then sends the goal again.
@@ -150,15 +153,15 @@ if (!sAct.bumper_pressed_center)
   if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
   {
     ROS_INFO("Hooray, the base moved 1 meter forward");
-    //running = false;
-    //runningnav = false;
+    running = false;
+    runningnav = false;
   } 
   //if something went wrong and it did not succed:
   if(ac.getState() == actionlib::SimpleClientGoalState::ABORTED)
   {
     ROS_INFO("The base failed to move forward 1 meter for some reason");
-    //running = false;  
-    //runningnav = false;
+    running = false;  
+    runningnav = false;
   }
 }
 ros::spinOnce();
