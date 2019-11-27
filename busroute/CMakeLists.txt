@@ -208,14 +208,13 @@ add_library(myLib src/getSensor.cpp)
 #target_link_libraries(color_detect myLib ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 add_executable(explore
-  src/navigation.cpp
   src/costmap_client.cpp
   src/explore.cpp
   src/frontier_search.cpp
-  src/color.cpp
+  src/navigation.cpp
+  src/colordetect.cpp
+  #src/color.cpp
 
-  
-  
 )
 add_dependencies(explore ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(explore myLib ${catkin_LIBRARIES} ${OpenCV_LIBS})

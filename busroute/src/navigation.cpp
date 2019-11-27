@@ -4,7 +4,13 @@
 #include <getSensor1/getSensor.h>
 #include <explore1/explore.h>
 #include <geometry_msgs/Twist.h>
-#include <color/color.h>  
+#include <color/colordetect.h> 
+#include <color/color.h>
+#include <opencv2/highgui/highgui.hpp>
+#include "opencv2/opencv.hpp"
+#include <cv_bridge/cv_bridge.h>
+#include <cstdlib>
+#include <string>
 //#include <kobuki_msgs/AutoDockingAction.h>
 
 /*
@@ -19,7 +25,7 @@ The simple_action_client package (Package for starting the action client)
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 //typedef actionlib::SimpleActionClient<kobuki_msgs::AutoDockingAction> AutoDockingClient;
 
-int main(int argc, char** argv){
+int main(int argc, char **argv){
   bool runningnav = false;
   bool runningexp = true;
   bool running = false;
@@ -31,9 +37,9 @@ int main(int argc, char** argv){
   
   // Create the soundClient:
   sound_play::SoundClient sc;
-  explore::Explore explore;
-  ImageConverter img;
-
+  //explore::Explore explore;
+  LineDetect det;
+  //ImageConverter imgcon;
  //tell the clients that we want to spin a thread by default
   MoveBaseClient ac("move_base", true);
   //AutoDockingClient dc ("dock_drive_action", true);
@@ -47,7 +53,7 @@ int main(int argc, char** argv){
 
 //This while loop should not be necessary, but it need to be tested
 
-while (runningexp)
+/*while (runningexp)
 {
   
   if (!explore.stopped)
@@ -58,14 +64,16 @@ while (runningexp)
     running = true;
   }
   ros::spinOnce();
-}
+}*/
+runningnav = true;
+running = true;
 while (runningnav)
 {
 if (!sAct.bumper_pressed_center)
 {
   ROS_INFO_STREAM("BUMPER NOT DETECTED");
 }
-
+  ROS_INFO_STREAM("TESTTEST");
   ROS_INFO_STREAM(sAct.map_size_x_);
   ROS_INFO_STREAM(sAct.map_size_y_);
   ROS_INFO_STREAM(sAct.map_res_);
@@ -83,7 +91,7 @@ if (!sAct.bumper_pressed_center)
   goal.target_pose.header.stamp = ros::Time::now();
 
   goal.target_pose.pose.position.x = 0.5;
-  goal.target_pose.pose.position.y = 0.5;
+  goal.target_pose.pose.position.y = 0;
   goal.target_pose.pose.orientation.w = 1.0;
 
   ROS_INFO_STREAM("Sending goal");
@@ -91,6 +99,11 @@ if (!sAct.bumper_pressed_center)
   
   while (running)
 {
+  if (!det.img.empty()) {
+            // Perform image processing
+            det.img_filt = det.Gauss(det.img);
+            det.colorthresh(det.img_filt);
+            }
   ros::spinOnce();
 //If bumpers is pressed, we want to cancel goal, and get away from obstacle
 //Where we then sends the goal again.
@@ -137,19 +150,20 @@ if (!sAct.bumper_pressed_center)
   if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
   {
     ROS_INFO("Hooray, the base moved 1 meter forward");
-    running = false;
-    runningnav = false;
+    //running = false;
+    //runningnav = false;
   } 
   //if something went wrong and it did not succed:
   if(ac.getState() == actionlib::SimpleClientGoalState::ABORTED)
   {
     ROS_INFO("The base failed to move forward 1 meter for some reason");
-    running = false;  
-    runningnav = false;
+    //running = false;  
+    //runningnav = false;
   }
 }
 ros::spinOnce();
 }
-
+  
   return 0;
+
 }
