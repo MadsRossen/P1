@@ -10,7 +10,10 @@
                 "/usr/include/**",
                 "/home/ros/ws/src/P1/busroute/include/**",
                 "/home/Mads/ws/src/P1/busroute/include/**",
-                "/home/ubu/ws/src/P1/busroute/include/**"
+                "/home/ubu/ws/src/P1/busroute/include/**",
+                "/home/ros/ws/src/P1/busroute/srv/**",
+                "/home/ros/ws/src/P1/beginner_tutorials/**",
+                "/home/ros/ws/devel/include/beginner_tutorials/**"
             ],
             "name": "ROS",
             "intelliSenseMode": "gcc-x64",

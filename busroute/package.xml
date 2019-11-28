@@ -51,7 +51,7 @@
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
-
+  <depend>beginner_tutorials</depend>
   <depend>roscpp</depend>
   <depend>std_msgs</depend>
   <depend>move_base_msgs</depend>
@@ -72,6 +72,10 @@
   <depend>cv_bridge</depend>
   <depend>image_transport</depend>
   <depend>rospy</depend>
+  
+  <build_depend>message_generation</build_depend>
+  <exec_depend>message_runtime</exec_depend>
+)
 
   <test_depend>roslaunch</test_depend>
 </package>

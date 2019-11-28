@@ -4,7 +4,8 @@ project(busroute)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS 
+find_package(catkin REQUIRED COMPONENTS
+beginner_tutorials 
 roscpp 
 geometry_msgs 
 move_base_msgs 
@@ -25,15 +26,29 @@ sensor_msgs
 cv_bridge
 image_transport
 rospy
+message_generation
+
 )
 
 
 #find_package(OpenCV REQUIRED)
 find_package(OpenCV REQUIRED)
+generate_messages(DEPENDENCIES std_msgs)
+#add_service_files(
+  #FILES
+  #AddTwoInts.srv
+#)
 
+#generate_messages(
+  #DEPENDENCIES
+  #std_msgs
+#)
 
 
 catkin_package(
+  INCLUDE_DIRS include
+  INCLUDE_DIRS beginner_tutorials
+  LIBRARIES beginner_tutorials
   CATKIN_DEPENDS
   roscpp 
   geometry_msgs 
@@ -55,6 +70,7 @@ catkin_package(
   sensor_msgs
   cv_bridge
   image_transport
+  message_runtime
 )
 
 
@@ -99,11 +115,8 @@ catkin_package(
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+
+
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -171,13 +184,12 @@ endif()
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
+  ${catkin_INCLUDE_DIRS}
 include
 getSensor1
 explore1
 task1
 color
-${catkin_INCLUDE_DIRS}
-
 )
 include_directories(${OpenCV_INCLUDE_DIR})
 
@@ -214,12 +226,16 @@ add_executable(explore
   src/navigation.cpp
   src/colordetect.cpp
   src/tasks.cpp
+  src/add_two_ints_client.cpp
   #src/color.cpp
 
 )
 add_dependencies(explore ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(explore myLib ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
+#add_executable(add_two_ints_client src/add_two_ints_client.cpp)
+#target_link_libraries(add_two_ints_client ${catkin_LIBRARIES})
+#add_dependencies(add_two_ints_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 
 #############
