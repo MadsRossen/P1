@@ -231,25 +231,5 @@ void SensorAct::digitalInputCB(const kobuki_msgs::DigitalInputEventConstPtr msg)
      }
 }
 
-void SensorAct::mapSizeCB(const nav_msgs::OccupancyGridConstPtr msg)
-{
-     //retrieving the cell size of the map from topic "move_base/local_costmap/costmap"
-     map_size_y_ = msg->info.height;
-     map_size_x_ = msg->info.width;
-     map_res_ = msg->info.resolution;
-     for (int i=0; i<100; i++ )
-     {
-          costMap[i] = msg->data[i];
-     }
-     
-     /*for (int i=0; i<100; i++ )
-     {
-          costMap[i] = msg->data[i];
-          ROS_INFO_STREAM(costMap[i]);
-     }*/
-     
-     //map_size_x_ = map_size_x_ * map_res_;
-     //map_size_y_ = map_size_y_ * map_res_;
 
 
-}

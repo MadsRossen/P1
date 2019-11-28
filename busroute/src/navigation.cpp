@@ -11,6 +11,7 @@
 #include <cv_bridge/cv_bridge.h>
 #include <cstdlib>
 #include <string>
+#include <task1/tasks.h>
 //#include <kobuki_msgs/AutoDockingAction.h>
 
 /*
@@ -29,15 +30,18 @@ int main(int argc, char **argv){
   bool runningnav = false;
   bool runningexp = true;
   bool running = false;
+  bool done = false;
 
   ros::init(argc, argv, "explore");
   // Calling new Sensoract class:
   SensorAct sAct;
+  Task task;
   // Calling new explore class:
   
   // Create the soundClient:
   sound_play::SoundClient sc;
   explore::Explore explore;
+  
   //LineDetect det;
   //ImageConverter imgcon;
  //tell the clients that we want to spin a thread by default
@@ -74,13 +78,13 @@ if (!sAct.bumper_pressed_center)
   ROS_INFO_STREAM("BUMPER NOT DETECTED");
 }
   ROS_INFO_STREAM("TESTTEST");
-  ROS_INFO_STREAM(sAct.map_size_x_);
-  ROS_INFO_STREAM(sAct.map_size_y_);
-  ROS_INFO_STREAM(sAct.map_res_);
-   for (int i=0; i<100; i++ )
+  //ROS_INFO_STREAM(task.map_size_x_);
+  //ROS_INFO_STREAM(task.map_size_y_);
+  //ROS_INFO_STREAM(task.map_res_);
+   /*for (int i=0; i<80; i++ )
      {
           ROS_INFO_STREAM(sAct.costMap[i]);
-     }
+     }*/
      //wait for the action server to come up
     while(!ac.waitForServer(ros::Duration(5.0))){
       ROS_INFO_STREAM("Waiting for the move_base action server to come up");
@@ -155,6 +159,7 @@ if (!sAct.bumper_pressed_center)
     ROS_INFO("Hooray, the base moved 1 meter forward");
     running = false;
     runningnav = false;
+    done = true;
   } 
   //if something went wrong and it did not succed:
   if(ac.getState() == actionlib::SimpleClientGoalState::ABORTED)
@@ -162,11 +167,30 @@ if (!sAct.bumper_pressed_center)
     ROS_INFO("The base failed to move forward 1 meter for some reason");
     running = false;  
     runningnav = false;
+    done = true;
+  }
+
+  if (done)
+  {
+     ros::spinOnce();
+      int j;
+      int i;
+      int u=0;
+      for (i=0; i<=task.map_size_x_; i++ )
+     {
+          for (j=0; j<=task.map_size_y_; j++ )
+          {
+           u++; 
+               std::cout << task.costmap[i][j]<<","; 
+          
+          }     
+      std::cout << std::endl;
+     }
+    done = false;
   }
 }
 ros::spinOnce();
 }
-  
   return 0;
 
 }

@@ -213,6 +213,7 @@ add_executable(explore
   src/frontier_search.cpp
   src/navigation.cpp
   src/colordetect.cpp
+  src/tasks.cpp
   #src/color.cpp
 
 )
