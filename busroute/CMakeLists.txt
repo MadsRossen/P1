@@ -5,7 +5,6 @@ project(busroute)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-beginner_tutorials 
 roscpp 
 geometry_msgs 
 move_base_msgs 
@@ -27,30 +26,33 @@ cv_bridge
 image_transport
 rospy
 message_generation
-
 )
 
 
 #find_package(OpenCV REQUIRED)
 find_package(OpenCV REQUIRED)
-generate_messages(DEPENDENCIES std_msgs)
+find_package(beginner_tutorials REQUIRED)
+find_package(Boost REQUIRED COMPONENTS system thread)
+#generate_messages(DEPENDENCIES std_msgs)
 #add_service_files(
   #FILES
   #AddTwoInts.srv
 #)
 
-#generate_messages(
-  #DEPENDENCIES
-  #std_msgs
-#)
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
+
+
 
 
 catkin_package(
   INCLUDE_DIRS include
-  INCLUDE_DIRS beginner_tutorials
   LIBRARIES beginner_tutorials
   CATKIN_DEPENDS
-  roscpp 
+  roscpp
+  roslib 
   geometry_msgs 
   move_base_msgs  
   actionlib
@@ -71,11 +73,13 @@ catkin_package(
   cv_bridge
   image_transport
   message_runtime
+  beginner_tutorials
+  DEPENDS Boost
 )
 
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -184,7 +188,9 @@ endif()
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
+ws/devel/include/beginner_tutorials/
   ${catkin_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
 include
 getSensor1
 explore1
@@ -207,6 +213,7 @@ include_directories(${OpenCV_INCLUDE_DIR})
 #add_executable(navigation src/navigation.cpp)
 #add_dependencies(navigation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_library(myLib src/getSensor.cpp)
+
 #target_link_libraries(navigation
   #${catkin_LIBRARIES}
   #myLib
@@ -244,7 +251,7 @@ target_link_libraries(explore myLib ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 # install nodes
 install(TARGETS explore
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+ ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
@@ -254,7 +261,7 @@ install(TARGETS explore
   #RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 #)
 
-# install roslaunch files
+#install roslaunch files
 install(DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
 )

@@ -16,8 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
-
+find_package(Boost REQUIRED COMPONENTS system thread)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -111,12 +110,14 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES beginner_tutorials
   CATKIN_DEPENDS roscpp rospy std_msgs message_runtime
+  DEPENDS Boost
 #  DEPENDS system_lib
 )
 
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  DEPENDS Boost
 )
 ###########
 ## Build ##
@@ -127,6 +128,7 @@ include_directories(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -159,9 +161,9 @@ include_directories(
 #   ${catkin_LIBRARIES}
 # )
 
-add_executable(add_two_ints_server src/add_two_ints_server.cpp)
-target_link_libraries(add_two_ints_server ${catkin_LIBRARIES})
-add_dependencies(add_two_ints_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_executable(beginner_tutorials src/add_two_ints_server.cpp)
+target_link_libraries(beginner_tutorials ${catkin_LIBRARIES})
+add_dependencies(beginner_tutorials ${beginner_tutorials_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 #add_executable(add_two_ints_client src/add_two_ints_client.cpp)
 #target_link_libraries(add_two_ints_client ${catkin_LIBRARIES})
