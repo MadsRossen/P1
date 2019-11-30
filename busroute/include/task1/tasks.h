@@ -14,7 +14,7 @@ class Task
 {
 public:
 Task() :
-hello(false)
+run_map_getter(false)
 {
 map_metaData_subscriber_ = nh.subscribe("move_base/global_costmap/costmap", 10, &Task::mapSizeCB, this);
 }
@@ -27,7 +27,7 @@ ros::NodeHandle nh;
 ros::Subscriber map_metaData_subscriber_;
 
 public:
-bool hello;
+bool run_map_getter;
 double map_res_;
 unsigned int map_size_x_, map_size_y_;
 int costmap[600][600];

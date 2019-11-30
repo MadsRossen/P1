@@ -174,7 +174,7 @@ include_directories(
 include
 getSensor1
 explore1
-task1
+#task1
 color
 ${catkin_INCLUDE_DIRS}
 
@@ -194,7 +194,7 @@ include_directories(${OpenCV_INCLUDE_DIR})
 
 #add_executable(navigation src/navigation.cpp)
 #add_dependencies(navigation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_library(myLib src/getSensor.cpp)
+add_library(myLib src/getSensor.cpp )
 #target_link_libraries(navigation
   #${catkin_LIBRARIES}
   #myLib
@@ -213,7 +213,7 @@ add_executable(explore
   src/frontier_search.cpp
   src/navigation.cpp
   src/colordetect.cpp
-  src/tasks.cpp
+  #src/tasks.cpp
   #src/color.cpp
 
 )

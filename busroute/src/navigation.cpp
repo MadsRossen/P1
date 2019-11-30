@@ -11,7 +11,8 @@
 #include <cv_bridge/cv_bridge.h>
 #include <cstdlib>
 #include <string>
-#include <task1/tasks.h>
+//#include <task1/tasks.h>
+#include <nav_msgs/GetMap.h>
 //#include <kobuki_msgs/AutoDockingAction.h>
 
 /*
@@ -24,18 +25,23 @@ The simple_action_client package (Package for starting the action client)
 */
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
+
 //typedef actionlib::SimpleActionClient<kobuki_msgs::AutoDockingAction> AutoDockingClient;
 
 int main(int argc, char **argv){
   bool runningnav = false;
   bool runningexp = true;
   bool running = false;
-  bool done = false;
-
+  bool startGetMap = false;
+  int map_size_y_;
+  int map_size_x_;
+  int j; 
+  int i;
+  int u=0;
   ros::init(argc, argv, "explore");
   // Calling new Sensoract class:
   SensorAct sAct;
-  Task task;
+  //Task task;
   // Calling new explore class:
   
   // Create the soundClient:
@@ -46,6 +52,9 @@ int main(int argc, char **argv){
   //ImageConverter imgcon;
  //tell the clients that we want to spin a thread by default
   MoveBaseClient ac("move_base", true);
+  ros::NodeHandle nh;
+  ros::ServiceClient GetMapClient = nh.serviceClient<nav_msgs::GetMap>("dynamic_map");
+  nav_msgs::GetMap srv_map;
   //AutoDockingClient dc ("dock_drive_action", true);
 
    // Create docking goal object:
@@ -73,6 +82,7 @@ while (runningexp)
 //running = true;
 while (runningnav)
 {
+   
 if (!sAct.bumper_pressed_center)
 {
   ROS_INFO_STREAM("BUMPER NOT DETECTED");
@@ -106,12 +116,13 @@ if (!sAct.bumper_pressed_center)
   
   while (running)
 {
+  
   /*if (!det.img.empty()) {
             // Perform image processing
             det.img_filt = det.Gauss(det.img);
             det.colorthresh(det.img_filt);
             }*/
-  ros::spinOnce();
+  
 //If bumpers is pressed, we want to cancel goal, and get away from obstacle
 //Where we then sends the goal again.
  if (sAct.bumper_pressed_center || sAct.bumper_pressed_left || sAct.bumper_pressed_right )
@@ -159,7 +170,8 @@ if (!sAct.bumper_pressed_center)
     ROS_INFO("Hooray, the base moved 1 meter forward");
     running = false;
     runningnav = false;
-    done = true;
+    startGetMap = true;
+    
   } 
   //if something went wrong and it did not succed:
   if(ac.getState() == actionlib::SimpleClientGoalState::ABORTED)
@@ -167,30 +179,59 @@ if (!sAct.bumper_pressed_center)
     ROS_INFO("The base failed to move forward 1 meter for some reason");
     running = false;  
     runningnav = false;
-    done = true;
+    startGetMap = true;
+    
   }
 
-  if (done)
+  if (startGetMap)
   {
      ros::spinOnce();
-      int j;
-      int i;
-      int u=0;
-      for (i=0; i<=task.map_size_x_; i++ )
-     {
-          for (j=0; j<=task.map_size_y_; j++ )
+    ROS_INFO_STREAM("RUNNING LOOP");
+    //srv_map.request;
+    if (GetMapClient.call(srv_map))
+      {
+        ROS_INFO("Map service called successfully");
+        map_size_y_= srv_map.response.map.info.height;
+        map_size_x_ = srv_map.response.map.info.width;
+        int costmap[map_size_x_][map_size_y_];
+        bool sendEnter = false;
+        std::cout << "Map_size_y_"<<"="<<map_size_y_<< std::endl;
+        std::cout << "Map_size_x_"<<"="<<map_size_x_<< std::endl;
+        for (i=0; i<=map_size_y_; i++ )
           {
-           u++; 
-               std::cout << task.costmap[i][j]<<","; 
-          
-          }     
-      std::cout << std::endl;
-     }
-    done = false;
+               for (j=0; j<=map_size_x_; j++ )
+               {
+                    
+                    if (srv_map.response.map.data[u] >= 0)
+                    {
+                      costmap[i][j] = srv_map.response.map.data[u];    
+                      std::cout << costmap[i][j]<<",";
+                      sendEnter = true; 
+                    }
+                    u++; 
+                    
+               }
+               if (sendEnter)
+               {
+                 std::cout << std::endl; 
+                 sendEnter = false; 
+               }
+                 
+          }
+      startGetMap = false;
+      }
+    else
+      {
+        ROS_ERROR("Failed to call service GetMap");
+        return 1;
+      }
   }
+ros::spinOnce(); 
 }
 ros::spinOnce();
 }
+
+  ROS_INFO("DONE MAIN TASK");
   return 0;
 
 }
