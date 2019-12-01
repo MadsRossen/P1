@@ -33,8 +33,8 @@ int main(int argc, char **argv){
   bool runningexp = true;
   bool running = false;
   bool startGetMap = false;
-  int map_size_y_;
-  int map_size_x_;
+  int map_size_i_;
+  int map_size_j_;
   int j; 
   int i;
   int u=0;
@@ -110,7 +110,7 @@ if (!sAct.bumper_pressed_center)
   goal.target_pose.pose.position.x = 0.5;
   goal.target_pose.pose.position.y = 0;
   goal.target_pose.pose.orientation.w = 1.0;
-
+  //https://answers.ros.org/question/197046/sending-map-co-ordinates-as-goal-to-move_base/ 
   ROS_INFO_STREAM("Sending goal");
   ac.sendGoal(goal);
   
@@ -191,33 +191,45 @@ if (!sAct.bumper_pressed_center)
     if (GetMapClient.call(srv_map))
       {
         ROS_INFO("Map service called successfully");
-        map_size_y_= srv_map.response.map.info.height;
-        map_size_x_ = srv_map.response.map.info.width;
-        int costmap[map_size_x_][map_size_y_];
+        map_size_i_= srv_map.response.map.info.height;
+        map_size_j_ = srv_map.response.map.info.width;
+        int costmap[map_size_i_][map_size_j_];
         bool sendEnter = false;
-        std::cout << "Map_size_y_"<<"="<<map_size_y_<< std::endl;
-        std::cout << "Map_size_x_"<<"="<<map_size_x_<< std::endl;
-        for (i=0; i<=map_size_y_; i++ )
+        int jcount = 0;
+        int countbefore = 0;
+        int icount = 0;
+        std::cout << "Map_size_i_"<<"="<<map_size_i_<< std::endl;
+        std::cout << "Map_size_j_"<<"="<<map_size_j_<< std::endl;
+        for (i=0; i<=map_size_i_; i++ )
           {
-               for (j=0; j<=map_size_x_; j++ )
+               for (j=0; j<=map_size_j_; j++ )
                {
                     
                     if (srv_map.response.map.data[u] >= 0)
                     {
                       costmap[i][j] = srv_map.response.map.data[u];    
                       std::cout << costmap[i][j]<<",";
-                      sendEnter = true; 
+                      sendEnter = true;
+                      jcount ++;  
                     }
-                    u++; 
+                    u++;
+                    
                     
                }
                if (sendEnter)
                {
                  std::cout << std::endl; 
-                 sendEnter = false; 
+                 sendEnter = false;
+                 icount ++;
+                 if (jcount > countbefore)  
+                 {
+                    countbefore = jcount;
+                 }
+                 jcount = 0;
                }
                  
           }
+      std::cout << "Map size"<<"="<<"i:"<<icount <<","<<"j:"<<countbefore<< std::endl;
       startGetMap = false;
       }
     else
