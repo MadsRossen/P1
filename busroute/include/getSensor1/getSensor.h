@@ -52,7 +52,7 @@ digitalInput_event_subsriber_ = nh_.subscribe("mobile_base/events/digital_input"
 powerSystem_event_subscriber_ = nh_.subscribe("mobile_base/events/power_system", 10, &SensorAct::powerSystemCB, this);
 cmd_vel_pub = nh_.advertise<geometry_msgs::Twist>("/cmd_vel_mux/input/teleop", 10);
 cmd_sound_pub = nh_.advertise<kobuki_msgs::Sound>("mobile_base/commands/sound", 10);
-
+robot_pose_subscriber_ = nh_.subscribe("robot_pose", 10 ,&SensorAct::robotPoseCB, this);
 }
 
 ~SensorAct()
@@ -75,7 +75,8 @@ bool cliffDetected_floor;
 bool wheeldropped_right;
 bool wheeldropped_left;
 bool wheeldropped;
-// Variables used for map size:
+// Variables used for pose:
+double x_pose, y_pose;
 
 
 geometry_msgs::Twist vel;
@@ -90,6 +91,7 @@ ros::Subscriber digitalInput_event_subsriber_;
 ros::Subscriber wheel_event_subscriber_;
 ros::Subscriber powerSystem_event_subscriber_;
 ros::Publisher cmd_sound_pub;
+ros::Subscriber robot_pose_subscriber_;
 
 
 
@@ -121,6 +123,7 @@ ros::Publisher cmd_sound_pub;
  */
      void powerSystemCB(const kobuki_msgs::PowerSystemEventConstPtr msg);
 
+    void robotPoseCB(const geometry_msgs::PoseConstPtr msg);
 
 };
 #endif 

@@ -13,6 +13,7 @@
 #include <string>
 //#include <task1/tasks.h>
 #include <nav_msgs/GetMap.h>
+#include <visualization_msgs/Marker.h>
 //#include <kobuki_msgs/AutoDockingAction.h>
 
 /*
@@ -52,11 +53,12 @@ int main(int argc, char **argv){
   //LineDetect det;
   //ImageConverter imgcon;
  //tell the clients that we want to spin a thread by default
-  MoveBaseClient ac("move_base", true);
+  
   ros::NodeHandle nh;
   ros::ServiceClient GetMapClient = nh.serviceClient<nav_msgs::GetMap>("dynamic_map");
   nav_msgs::GetMap srv_map;
   explore::Explore explore;
+  ros::Publisher vis_pub = nh.advertise<visualization_msgs::Marker>( "visualization_marker", 0 );
   //AutoDockingClient dc ("dock_drive_action", true);
 
    // Create docking goal object:
@@ -99,12 +101,14 @@ if (!sAct.bumper_pressed_center)
      }*/
      //wait for the action server to come up
     //srv_map.request;
+    explore.~Explore();
+    MoveBaseClient ac("move_base", true);
     while(!ac.waitForServer(ros::Duration(5.0))){
       ROS_INFO_STREAM("Waiting for the move_base action server to come up");
     }
   move_base_msgs::MoveBaseGoal goal;
-  goal_y = 0.0;
-  goal_x = 0.0;
+  goal_y = 5.0;
+  goal_x = 5.0;
   //we'll send a goal to the robot to move 1 meter forward
   //We need to figure out what the frame_id is, base_link, /map or /odom ??
   goal.target_pose.header.frame_id = "/map";
@@ -112,7 +116,9 @@ if (!sAct.bumper_pressed_center)
 
   //goal.target_pose.pose.position.x = 0.5;
   //goal.target_pose.pose.position.y = 0.5;
-  goal.target_pose.pose.orientation.w = 1.0;
+  //goal.target_pose.pose.orientation.w = 1.0;
+  std::cout << "x_origin"<<"="<<srv_map.response.map.info.origin.position.x<< std::endl;
+  std::cout << "y_origin"<<"="<<srv_map.response.map.info.origin.position.y<< std::endl;
     if (GetMapClient.call(srv_map))
       {
         map_res = srv_map.response.map.info.resolution;
@@ -125,11 +131,33 @@ if (!sAct.bumper_pressed_center)
         ROS_ERROR("Failed to call service GetMap");
         return 1;
       }
+  visualization_msgs::Marker marker;
+marker.header.frame_id = "/map";
+marker.header.stamp = ros::Time();
+marker.ns = "my_namespace";
+marker.id = 0;
+marker.type = visualization_msgs::Marker::SPHERE;
+marker.action = visualization_msgs::Marker::ADD;
+marker.pose.position.x = srv_map.response.map.info.origin.position.x;
+marker.pose.position.y = srv_map.response.map.info.origin.position.y;
+marker.pose.position.z = 0;
+marker.pose.orientation.x = 0.0;
+marker.pose.orientation.y = 0.0;
+marker.pose.orientation.z = 0.0;
+marker.pose.orientation.w = 1.0;
+marker.scale.x = 0.2;
+marker.scale.y = 0.1;
+marker.scale.z = 0.1;
+marker.color.a = 1.0; // Don't forget to set the alpha!
+marker.color.r = 0.0;
+marker.color.g = 1.0;
+marker.color.b = 0.0;
+//only if using a MESH_RESOURCE marker type:
+vis_pub.publish( marker );
   
   //https://answers.ros.org/question/197046/sending-map-co-ordinates-as-goal-to-move_base/ 
   ROS_INFO_STREAM("Sending goal");
   ac.sendGoal(goal);
-  
   while (running)
 {
   
@@ -177,7 +205,6 @@ if (!sAct.bumper_pressed_center)
   }
   
   //ac.waitForResult();
-
   //If we receive result and its succeded:
   if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
   {

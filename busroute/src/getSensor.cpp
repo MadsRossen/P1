@@ -231,5 +231,11 @@ void SensorAct::digitalInputCB(const kobuki_msgs::DigitalInputEventConstPtr msg)
      }
 }
 
+void SensorAct::robotPoseCB(const geometry_msgs::PoseConstPtr msg)
+{
+     x_pose = msg->position.x;
+     y_pose = msg->position.y;
+     
+}
 
 
