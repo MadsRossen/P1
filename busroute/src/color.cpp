@@ -62,20 +62,34 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     cv::namedWindow(OPENCV_WINDOW,600);
     cv::imshow(OPENCV_WINDOW, part);
     cv::imshow(OPENCV_WINDOW_UNCROPPED, mask);
-    int whitePixels = cv::countNonZero(part);
+  
+    int whitePixels_blue = cv::countNonZero(maskBlue);
+    int whitePixels_red = cv::countNonZero(maskRed);
+    int whitePixels_green = cv::countNonZero(maskGreen);
     
     //std::cout << whitePixels << std::endl;
     bool trashDetected;
-    if (whitePixels >= 3000 && trashDetected == false)
+    if (whitePixels_blue >= 3000 && trashDetected == false)
     {
-      std::cout << "trash detected" << std::endl;
+      std::cout << "trash detected (blue)" << std::endl;
       trashDetected = true;
     }
+    if (whitePixels_red >= 3000 && trashDetected == false)
+    {
+      std::coout << "trash detected (red)" << std::endl;
+      trashDetected = true;
+    }
+    if (whitePixels_green >= 3000 && trashDetected ==false)
+    {
+      std::cout << "trash detected (green)" << std::endl;
+      trashDetected = true;
+    }
+    
     if (whitePixels < 200)
     {
       trashDetected = false;
     }
-
+    
 
     cv::waitKey(3);
 
