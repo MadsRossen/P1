@@ -194,7 +194,7 @@ ws/devel/include/beginner_tutorials/
 include
 getSensor1
 explore1
-task1
+#task1
 color
 )
 include_directories(${OpenCV_INCLUDE_DIR})
@@ -212,8 +212,12 @@ include_directories(${OpenCV_INCLUDE_DIR})
 
 #add_executable(navigation src/navigation.cpp)
 #add_dependencies(navigation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+<<<<<<< HEAD
 add_library(myLib src/getSensor.cpp)
 
+=======
+add_library(myLib src/getSensor.cpp )
+>>>>>>> 9baf4a84a34564b3c140e415cf9027ae016e25b8
 #target_link_libraries(navigation
   #${catkin_LIBRARIES}
   #myLib
@@ -232,8 +236,12 @@ add_executable(explore
   src/frontier_search.cpp
   src/navigation.cpp
   src/colordetect.cpp
+<<<<<<< HEAD
   src/tasks.cpp
   src/add_two_ints_client.cpp
+=======
+  #src/tasks.cpp
+>>>>>>> 9baf4a84a34564b3c140e415cf9027ae016e25b8
   #src/color.cpp
 
 )

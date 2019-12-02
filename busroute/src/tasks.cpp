@@ -16,13 +16,20 @@
      int j;
      int i;
      int u=0;
-     for (i=0; i<=map_size_x_; i++ )
+     ROS_INFO_STREAM("MAP DATA GOTTEN");
+     if (run_map_getter)
      {
-          for (j=0; j<=map_size_y_; j++ )
+          for (i=0; i<=map_size_x_; i++ )
           {
-           u++; 
-               costmap[i][j] = msg->data[u];    
-          
-          }     
-     }
+               for (j=0; j<=map_size_y_; j++ )
+               {
+                    u++; 
+                    costmap[i][j] = msg->data[u];    
+                    std::cout << costmap[i][j]<<","; 
+               }
+               std::cout << std::endl;    
+          }ROS_INFO_STREAM("RUNNING LOOP");
+      run_map_getter = false;   
+     } 
+     ROS_INFO_STREAM("DONE MAP PROCESS");
 }
