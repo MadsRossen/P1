@@ -150,7 +150,6 @@ if (!sAct.bumper_pressed_center)
           sAct.bumper_pressed_right = false;
           //ms.vel.angular.z = 4.0;
           ac.sendGoal(goal);
-
      }
 //If turtlebot is tilted we want to cancel goal and send warning sound.
   if (sAct.wheeldropped)
@@ -159,7 +158,6 @@ if (!sAct.bumper_pressed_center)
     ac.cancelGoal(); 
     ROS_INFO("Turtlebot is being lifted or tilted! Goal canceled. Heading back to docking station");
     sAct.wheeldropped = false;
-
   }
   
   //ac.waitForResult();
@@ -191,8 +189,8 @@ if (!sAct.bumper_pressed_center)
     if (GetMapClient.call(srv_map))
       {
         ROS_INFO("Map service called successfully");
-        map_size_i_= srv_map.response.map.info.height;
-        map_size_j_ = srv_map.response.map.info.width;
+        map_size_i_= srv_map.response.map.info.height -1;
+        map_size_j_ = srv_map.response.map.info.width -1;
         int costmap[map_size_i_][map_size_j_];
         bool sendEnter = false;
         int jcount = 0;
@@ -200,7 +198,8 @@ if (!sAct.bumper_pressed_center)
         int icount = 0;
         std::cout << "Map_size_i_"<<"="<<map_size_i_<< std::endl;
         std::cout << "Map_size_j_"<<"="<<map_size_j_<< std::endl;
-        for (i=0; i<=map_size_i_; i++ )
+
+        for (i=map_size_i_; i>=0; i-- )
           {
                for (j=0; j<=map_size_j_; j++ )
                {
