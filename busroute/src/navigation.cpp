@@ -38,6 +38,8 @@ int main(int argc, char **argv){
   int j; 
   int i;
   int u=0;
+  double goal_x, goal_y, x_pos, y_pos, map_res;
+  
   ros::init(argc, argv, "explore");
   // Calling new Sensoract class:
   SensorAct sAct;
@@ -46,7 +48,6 @@ int main(int argc, char **argv){
   
   // Create the soundClient:
   sound_play::SoundClient sc;
-  explore::Explore explore;
   
   //LineDetect det;
   //ImageConverter imgcon;
@@ -55,6 +56,7 @@ int main(int argc, char **argv){
   ros::NodeHandle nh;
   ros::ServiceClient GetMapClient = nh.serviceClient<nav_msgs::GetMap>("dynamic_map");
   nav_msgs::GetMap srv_map;
+  explore::Explore explore;
   //AutoDockingClient dc ("dock_drive_action", true);
 
    // Create docking goal object:
@@ -96,20 +98,34 @@ if (!sAct.bumper_pressed_center)
           ROS_INFO_STREAM(sAct.costMap[i]);
      }*/
      //wait for the action server to come up
+    //srv_map.request;
     while(!ac.waitForServer(ros::Duration(5.0))){
       ROS_INFO_STREAM("Waiting for the move_base action server to come up");
     }
-
   move_base_msgs::MoveBaseGoal goal;
-
+  goal_y = 0.0;
+  goal_x = 0.0;
   //we'll send a goal to the robot to move 1 meter forward
   //We need to figure out what the frame_id is, base_link, /map or /odom ??
-  goal.target_pose.header.frame_id = "map";
+  goal.target_pose.header.frame_id = "/map";
   goal.target_pose.header.stamp = ros::Time::now();
 
-  goal.target_pose.pose.position.x = 0.5;
-  goal.target_pose.pose.position.y = 0;
+  //goal.target_pose.pose.position.x = 0.5;
+  //goal.target_pose.pose.position.y = 0.5;
   goal.target_pose.pose.orientation.w = 1.0;
+    if (GetMapClient.call(srv_map))
+      {
+        map_res = srv_map.response.map.info.resolution;
+        goal.target_pose.pose.position.x = srv_map.response.map.info.origin.position.x + ((goal_x+0.5)*map_res);
+        goal.target_pose.pose.position.y = srv_map.response.map.info.origin.position.y + ((goal_y+0.5)*map_res);
+        goal.target_pose.pose.orientation.w = 1.0;
+      }
+    else
+      {
+        ROS_ERROR("Failed to call service GetMap");
+        return 1;
+      }
+  
   //https://answers.ros.org/question/197046/sending-map-co-ordinates-as-goal-to-move_base/ 
   ROS_INFO_STREAM("Sending goal");
   ac.sendGoal(goal);
@@ -178,26 +194,26 @@ if (!sAct.bumper_pressed_center)
     running = false;  
     runningnav = false;
     startGetMap = true;
-    
   }
 
-  if (startGetMap)
+ if (startGetMap)
   {
-     ros::spinOnce();
     ROS_INFO_STREAM("RUNNING LOOP");
-    //srv_map.request;
-    if (GetMapClient.call(srv_map))
+    ros::spinOnce();
+     if (GetMapClient.call(srv_map))
       {
         ROS_INFO("Map service called successfully");
         map_size_i_= srv_map.response.map.info.height -1;
         map_size_j_ = srv_map.response.map.info.width -1;
+        //x_pos = srv_map.response.map.info.origin.position.x;
+        //y_pos = srv_map.response.map.info.origin.position.y;
         int costmap[map_size_i_][map_size_j_];
         bool sendEnter = false;
         int jcount = 0;
         int countbefore = 0;
         int icount = 0;
-        std::cout << "Map_size_i_"<<"="<<map_size_i_<< std::endl;
-        std::cout << "Map_size_j_"<<"="<<map_size_j_<< std::endl;
+        std::cout << "Total Map_size_i_"<<"="<<map_size_i_<< std::endl;
+        std::cout << "Total Map_size_j_"<<"="<<map_size_j_<< std::endl;
 
         for (i=map_size_i_; i>=0; i-- )
           {
@@ -207,7 +223,7 @@ if (!sAct.bumper_pressed_center)
                     if (srv_map.response.map.data[u] >= 0)
                     {
                       costmap[i][j] = srv_map.response.map.data[u];    
-                      std::cout << costmap[i][j]<<",";
+                      //std::cout << costmap[i][j]<<",";
                       sendEnter = true;
                       jcount ++;  
                     }
@@ -217,7 +233,7 @@ if (!sAct.bumper_pressed_center)
                }
                if (sendEnter)
                {
-                 std::cout << std::endl; 
+                 //std::cout << std::endl; 
                  sendEnter = false;
                  icount ++;
                  if (jcount > countbefore)  
@@ -228,7 +244,7 @@ if (!sAct.bumper_pressed_center)
                }
                  
           }
-      std::cout << "Map size"<<"="<<"i:"<<icount <<","<<"j:"<<countbefore<< std::endl;
+      std::cout << "Used Map size"<<"="<<"i:"<<icount <<","<<"j:"<<countbefore<< std::endl;
       startGetMap = false;
       }
     else
