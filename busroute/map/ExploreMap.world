@@ -30,6 +30,7 @@
           <geometry>
             <mesh>
               <uri>model://jersey_barrier/meshes/jersey_barrier.dae</uri>
+              <scale>1 1 1</scale>
             </mesh>
           </geometry>
         </visual>
@@ -222,10 +223,10 @@
       <pose frame=''>0.497681 0 0 0 -0 0</pose>
     </model>
     <state world_name='default'>
-      <sim_time>201 810000000</sim_time>
-      <real_time>87 292724773</real_time>
-      <wall_time>1575149049 472009444</wall_time>
-      <iterations>8696</iterations>
+      <sim_time>396 390000000</sim_time>
+      <real_time>195 178674570</real_time>
+      <wall_time>1575279153 541763530</wall_time>
+      <iterations>19458</iterations>
       <model name='ground_plane_0'>
         <pose frame=''>0.497681 0 0 0 -0 0</pose>
         <scale>1 1 1</scale>
@@ -237,85 +238,85 @@
         </link>
       </model>
       <model name='jersey_barrier'>
-        <pose frame=''>0.535141 -2.41092 0 0 0 -0.7</pose>
+        <pose frame=''>-1.47967 -2.41277 0 0 0 -1.53887</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>0.535141 -2.41092 0 0 0 -0.7</pose>
+          <pose frame=''>-1.47967 -2.41277 0 0 0 -1.53887</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='jersey_barrier_clone'>
-        <pose frame=''>3.37945 0.902715 0 0 0 -0.7</pose>
+        <pose frame=''>2.88823 -2.23209 0 0 0 -1.55313</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>3.37945 0.902715 0 0 0 -0.7</pose>
+          <pose frame=''>2.88823 -2.23209 0 0 0 -1.55313</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='jersey_barrier_clone_0'>
-        <pose frame=''>-2.22162 2.86177 0 0 -0 0.845787</pose>
+        <pose frame=''>0.621766 3.55417 0 0 -0 0.009076</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-2.22162 2.86177 0 0 -0 0.845787</pose>
+          <pose frame=''>0.621766 3.55417 0 0 -0 0.009076</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='jersey_barrier_clone_0_clone'>
-        <pose frame=''>3.44108 -1.95466 0 0 -0 0.845787</pose>
+        <pose frame=''>0.817698 -4.21873 0 0 -0 0.013248</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>3.44108 -1.95466 0 0 -0 0.845787</pose>
+          <pose frame=''>0.817698 -4.21873 0 0 -0 0.013248</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='jersey_barrier_clone_1'>
-        <pose frame=''>-2.22919 -0.094924 0 0 0 -0.7</pose>
+        <pose frame=''>-1.62147 1.58255 0 0 0 -1.54496</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-2.22919 -0.094924 0 0 0 -0.7</pose>
+          <pose frame=''>-1.62147 1.58255 0 0 0 -1.54496</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='jersey_barrier_clone_clone'>
-        <pose frame=''>0.474722 3.36043 0 0 0 -0.7</pose>
+        <pose frame=''>2.76581 1.68152 0 0 0 -1.57346</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>0.474722 3.36043 0 0 0 -0.7</pose>
+          <pose frame=''>2.76581 1.68152 0 0 0 -1.57346</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='mobile_base'>
-        <pose frame=''>0.527194 0.067203 -0.001131 4.6e-05 -0.007995 0.176775</pose>
+        <pose frame=''>-0.34917 0.414634 -0.001131 5e-05 -0.007997 1.53713</pose>
         <scale>1 1 1</scale>
         <link name='base_footprint'>
-          <pose frame=''>0.527194 0.067203 -0.001131 4.6e-05 -0.007995 0.176775</pose>
-          <velocity>3.9e-05 -0.000283 -1.1e-05 -0.003331 -0.00042 0.000123</velocity>
-          <acceleration>-1.2e-05 -7.3e-05 -0.001859 -0.084029 0.005066 0.012576</acceleration>
-          <wrench>-5.5e-05 -0.000343 -0.008735 0 -0 0</wrench>
+          <pose frame=''>-0.34917 0.414634 -0.001131 5e-05 -0.007997 1.53713</pose>
+          <velocity>-0.000154 2.9e-05 7e-06 3.1e-05 0.000171 -0.000383</velocity>
+          <acceleration>0.000152 -0.000311 -0.003023 -0.012992 0.043703 -0.017379</acceleration>
+          <wrench>0.000714 -0.001462 -0.0142 0 -0 0</wrench>
         </link>
         <link name='wheel_left_link'>
-          <pose frame=''>0.50669 0.180339 0.034981 1.5709 1.04686 -2.96473</pose>
-          <velocity>1.1e-05 -0.000169 -0.000397 -0.003331 -0.00042 0.000123</velocity>
-          <acceleration>0.006859 0.0423 -2.27976 0.164128 0.02932 0.014094</acceleration>
-          <wrench>6.9e-05 0.000423 -0.022798 0 -0 0</wrench>
+          <pose frame=''>-0.464096 0.418215 0.035178 1.57089 -0.735516 -1.60452</pose>
+          <velocity>-0.000147 7.2e-05 2.7e-05 3.1e-05 0.000171 -0.000383</velocity>
+          <acceleration>0.007655 -0.007299 0.841918 -0.000638 -0.046794 -0.009745</acceleration>
+          <wrench>7.7e-05 -7.3e-05 0.008419 0 -0 0</wrench>
         </link>
         <link name='wheel_right_link'>
-          <pose frame=''>0.547142 -0.046056 0.034819 1.57098 -1.35816 -2.965</pose>
-          <velocity>3.8e-05 -0.000164 0.000374 -0.003331 -0.00042 0.000123</velocity>
-          <acceleration>-0.001401 -0.008038 -1.88233 0.132312 0.023637 0.00871</acceleration>
-          <wrench>-1.4e-05 -8e-05 -0.018823 0 -0 0</wrench>
+          <pose frame=''>-0.23423 0.410484 0.034994 1.57105 -1.33321 -1.60471</pose>
+          <velocity>-0.00015 -1.6e-05 -1.2e-05 3.1e-05 0.000171 -0.000383</velocity>
+          <acceleration>0.008163 0.000845 0.707726 -0.054805 -0.041107 -0.007453</acceleration>
+          <wrench>8.2e-05 8e-06 0.007077 0 -0 0</wrench>
         </link>
       </model>
       <light name='sun'>
@@ -324,7 +325,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose frame=''>0.630424 2.22884 15.6001 -2e-06 1.5698 3.04015</pose>
+        <pose frame=''>0.98787 -0.806308 15.5259 1e-06 1.5698 3.04015</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
@@ -1488,6 +1489,7 @@
           <geometry>
             <mesh>
               <uri>model://jersey_barrier/meshes/jersey_barrier.dae</uri>
+              <scale>1 1 1</scale>
             </mesh>
           </geometry>
         </visual>
@@ -1634,6 +1636,7 @@
           <geometry>
             <mesh>
               <uri>model://jersey_barrier/meshes/jersey_barrier.dae</uri>
+              <scale>1 1 1</scale>
             </mesh>
           </geometry>
         </visual>
@@ -1780,6 +1783,7 @@
           <geometry>
             <mesh>
               <uri>model://jersey_barrier/meshes/jersey_barrier.dae</uri>
+              <scale>1 1 1</scale>
             </mesh>
           </geometry>
         </visual>
@@ -1926,6 +1930,7 @@
           <geometry>
             <mesh>
               <uri>model://jersey_barrier/meshes/jersey_barrier.dae</uri>
+              <scale>1 1 1</scale>
             </mesh>
           </geometry>
         </visual>
@@ -2072,6 +2077,7 @@
           <geometry>
             <mesh>
               <uri>model://jersey_barrier/meshes/jersey_barrier.dae</uri>
+              <scale>1 1 1</scale>
             </mesh>
           </geometry>
         </visual>
