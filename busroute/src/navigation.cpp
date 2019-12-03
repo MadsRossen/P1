@@ -40,6 +40,12 @@ int main(int argc, char **argv){
   int i;
   int u=0;
   double goal_x, goal_y, x_pos, y_pos, map_res;
+  bool sendEnter = false;
+  bool firstobstacle = true;
+  int jcount = 0;
+  int countbefore = 0;
+  int icount = 0;
+  int x_first_ob, y_first_ob;
   
   ros::init(argc, argv, "explore");
   // Calling new Sensoract class:
@@ -59,6 +65,7 @@ int main(int argc, char **argv){
   nav_msgs::GetMap srv_map;
   explore::Explore explore;
   ros::Publisher vis_pub = nh.advertise<visualization_msgs::Marker>( "visualization_marker", 0 );
+
   //AutoDockingClient dc ("dock_drive_action", true);
 
    // Create docking goal object:
@@ -72,10 +79,8 @@ int main(int argc, char **argv){
 
 while (runningexp)
 {
-  
   if (!explore.stopped)
-  {
-    
+  {   
     runningexp = false;
     runningnav = true;
     running = true;
@@ -86,29 +91,77 @@ while (runningexp)
 //running = true;
 while (runningnav)
 {
-   
 if (!sAct.bumper_pressed_center)
 {
   ROS_INFO_STREAM("BUMPER NOT DETECTED");
 }
   ROS_INFO_STREAM("TESTTEST");
-  //ROS_INFO_STREAM(task.map_size_x_);
-  //ROS_INFO_STREAM(task.map_size_y_);
-  //ROS_INFO_STREAM(task.map_res_);
-   /*for (int i=0; i<80; i++ )
-     {
-          ROS_INFO_STREAM(sAct.costMap[i]);
-     }*/
-     //wait for the action server to come up
-    //srv_map.request;
-    explore.~Explore();
+    //explore.~Explore();
     MoveBaseClient ac("move_base", true);
     while(!ac.waitForServer(ros::Duration(5.0))){
       ROS_INFO_STREAM("Waiting for the move_base action server to come up");
     }
+  
+
+  ROS_INFO_STREAM("RUNNING LOOP");
+     if (GetMapClient.call(srv_map))
+      {
+        ROS_INFO("Map service called successfully");
+        map_size_i_= srv_map.response.map.info.height -1;
+        map_size_j_ = srv_map.response.map.info.width -1;
+        //x_pos = srv_map.response.map.info.origin.position.x;
+        //y_pos = srv_map.response.map.info.origin.position.y;
+        int sorted_costmap[map_size_i_][map_size_j_];
+        int unsorted_costmap[map_size_i_][map_size_j_];
+        std::cout << "Total Map_size_i_"<<"="<<map_size_i_<< std::endl;
+        std::cout << "Total Map_size_j_"<<"="<<map_size_j_<< std::endl;
+
+        for (i=map_size_i_; i>=0; i-- )
+          {
+               for (j=0; j<=map_size_j_; j++ )
+               {
+                    if (srv_map.response.map.data[u] == 100 && firstobstacle)
+                    {
+                      x_first_ob = j;
+                      y_first_ob = i;
+                      firstobstacle = false;
+                    }
+                    if (srv_map.response.map.data[u] >= 0)
+                    {
+                      sorted_costmap[j][i] = srv_map.response.map.data[u];    
+                      //std::cout << costmap[i][j]<<",";
+                      sendEnter = true;
+                      jcount ++;
+                    }
+                    u++;
+                    
+                    
+               }
+               if (sendEnter)
+               {
+                 //std::cout << std::endl; 
+                 sendEnter = false;
+                 icount ++;
+                 if (jcount > countbefore)  
+                 {
+                    countbefore = jcount;
+                 }
+                 jcount = 0;
+               }
+                 
+          }
+      std::cout << "Used Map size"<<"="<<"y:"<<icount <<","<<"x:"<<countbefore<< std::endl;
+      startGetMap = false;
+      }
+    else
+      {
+        ROS_ERROR("Failed to call service GetMap");
+        return 1;
+      }
+
   move_base_msgs::MoveBaseGoal goal;
-  goal_y = 5.0;
-  goal_x = 5.0;
+  goal_y = 1.0;
+  goal_x = 1.0;
   //we'll send a goal to the robot to move 1 meter forward
   //We need to figure out what the frame_id is, base_link, /map or /odom ??
   goal.target_pose.header.frame_id = "/map";
@@ -122,8 +175,8 @@ if (!sAct.bumper_pressed_center)
     if (GetMapClient.call(srv_map))
       {
         map_res = srv_map.response.map.info.resolution;
-        goal.target_pose.pose.position.x = srv_map.response.map.info.origin.position.x + ((goal_x+0.5)*map_res);
-        goal.target_pose.pose.position.y = srv_map.response.map.info.origin.position.y + ((goal_y+0.5)*map_res);
+        goal.target_pose.pose.position.x =  x_first_ob * map_res + goal_x;
+        goal.target_pose.pose.position.y = y_first_ob * map_res + goal_y;
         goal.target_pose.pose.orientation.w = 1.0;
       }
     else
@@ -131,6 +184,13 @@ if (!sAct.bumper_pressed_center)
         ROS_ERROR("Failed to call service GetMap");
         return 1;
       }
+  
+std::cout << "First obstacle X"<<"="<<x_first_ob<< std::endl;
+std::cout << "First obstacle Y"<<"="<<y_first_ob<< std::endl;
+std::cout << "First obstacle X * mapres"<<"="<<x_first_ob * map_res<< std::endl;
+std::cout << "First obstacle Y * mapres"<<"="<<y_first_ob * map_res<< std::endl;
+std::cout << "Turtlebot pos_x"<<"="<<sAct.x_pose<< std::endl;
+std::cout << "Turtlebot pos_y"<<"="<<sAct.y_pose<< std::endl;
   visualization_msgs::Marker marker;
 marker.header.frame_id = "/map";
 marker.header.stamp = ros::Time();
@@ -138,23 +198,21 @@ marker.ns = "my_namespace";
 marker.id = 0;
 marker.type = visualization_msgs::Marker::SPHERE;
 marker.action = visualization_msgs::Marker::ADD;
-marker.pose.position.x = srv_map.response.map.info.origin.position.x;
-marker.pose.position.y = srv_map.response.map.info.origin.position.y;
+marker.pose.position.x = x_first_ob * -1;
+marker.pose.position.y = y_first_ob * -1;
 marker.pose.position.z = 0;
 marker.pose.orientation.x = 0.0;
 marker.pose.orientation.y = 0.0;
 marker.pose.orientation.z = 0.0;
 marker.pose.orientation.w = 1.0;
-marker.scale.x = 0.2;
-marker.scale.y = 0.1;
-marker.scale.z = 0.1;
+marker.scale.x = 0.3;
+marker.scale.y = 0.3;
+marker.scale.z = 0.3;
 marker.color.a = 1.0; // Don't forget to set the alpha!
 marker.color.r = 0.0;
 marker.color.g = 1.0;
 marker.color.b = 0.0;
-//only if using a MESH_RESOURCE marker type:
 vis_pub.publish( marker );
-  
   //https://answers.ros.org/question/197046/sending-map-co-ordinates-as-goal-to-move_base/ 
   ROS_INFO_STREAM("Sending goal");
   ac.sendGoal(goal);
@@ -225,60 +283,7 @@ vis_pub.publish( marker );
 
  if (startGetMap)
   {
-    ROS_INFO_STREAM("RUNNING LOOP");
-    ros::spinOnce();
-     if (GetMapClient.call(srv_map))
-      {
-        ROS_INFO("Map service called successfully");
-        map_size_i_= srv_map.response.map.info.height -1;
-        map_size_j_ = srv_map.response.map.info.width -1;
-        //x_pos = srv_map.response.map.info.origin.position.x;
-        //y_pos = srv_map.response.map.info.origin.position.y;
-        int costmap[map_size_i_][map_size_j_];
-        bool sendEnter = false;
-        int jcount = 0;
-        int countbefore = 0;
-        int icount = 0;
-        std::cout << "Total Map_size_i_"<<"="<<map_size_i_<< std::endl;
-        std::cout << "Total Map_size_j_"<<"="<<map_size_j_<< std::endl;
-
-        for (i=map_size_i_; i>=0; i-- )
-          {
-               for (j=0; j<=map_size_j_; j++ )
-               {
-                    
-                    if (srv_map.response.map.data[u] >= 0)
-                    {
-                      costmap[i][j] = srv_map.response.map.data[u];    
-                      //std::cout << costmap[i][j]<<",";
-                      sendEnter = true;
-                      jcount ++;  
-                    }
-                    u++;
-                    
-                    
-               }
-               if (sendEnter)
-               {
-                 //std::cout << std::endl; 
-                 sendEnter = false;
-                 icount ++;
-                 if (jcount > countbefore)  
-                 {
-                    countbefore = jcount;
-                 }
-                 jcount = 0;
-               }
-                 
-          }
-      std::cout << "Used Map size"<<"="<<"i:"<<icount <<","<<"j:"<<countbefore<< std::endl;
-      startGetMap = false;
-      }
-    else
-      {
-        ROS_ERROR("Failed to call service GetMap");
-        return 1;
-      }
+    
   }
 ros::spinOnce(); 
 }
