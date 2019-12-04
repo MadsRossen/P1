@@ -6,8 +6,9 @@
   <arg name = "world_file" value =  "$(find busroute)/map/ExploreMap.world"/>
   </include>
   <include file="$(find turtlebot_gazebo)/launch/gmapping_demo.launch"/>
-  <include file="$(find turtlebot_navigation)/launch/includes/move_base.launch.xml" />
+  <include file="$(find busroute)/launch/includes/move_base.launch.xml" />
   <include file="$(find kobuki_auto_docking)/launch/minimal.launch" />
+  <node name="robot_pose_publisher" pkg="robot_pose_publisher" type="robot_pose_publisher"/>
   <node name="soundplay" pkg="sound_play" type="soundplay_node.py" />
 <node pkg="busroute" type="explore" name="explore" output="screen">
   <param name="robot_base_frame" value="base_link"/>

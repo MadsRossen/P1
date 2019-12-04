@@ -65,6 +65,7 @@ int main(int argc, char **argv){
   nav_msgs::GetMap srv_map;
   explore::Explore explore;
   ros::Publisher vis_pub = nh.advertise<visualization_msgs::Marker>( "visualization_marker", 0 );
+  visualization_msgs::Marker marker;
 
   //AutoDockingClient dc ("dock_drive_action", true);
 
@@ -77,6 +78,10 @@ int main(int argc, char **argv){
 
 //This while loop should not be necessary, but it need to be tested
 
+
+
+float x_InitialPose = sAct.x_currentPose;
+float y_InitialPose = sAct.y_currentPose;
 while (runningexp)
 {
   if (!explore.stopped)
@@ -96,7 +101,7 @@ if (!sAct.bumper_pressed_center)
   ROS_INFO_STREAM("BUMPER NOT DETECTED");
 }
   ROS_INFO_STREAM("TESTTEST");
-    //explore.~Explore();
+    explore.~Explore();
     MoveBaseClient ac("move_base", true);
     while(!ac.waitForServer(ros::Duration(5.0))){
       ROS_INFO_STREAM("Waiting for the move_base action server to come up");
@@ -107,8 +112,8 @@ if (!sAct.bumper_pressed_center)
      if (GetMapClient.call(srv_map))
       {
         ROS_INFO("Map service called successfully");
-        map_size_i_= srv_map.response.map.info.height -1;
-        map_size_j_ = srv_map.response.map.info.width -1;
+        map_size_i_= srv_map.response.map.info.width -1;
+        map_size_j_ = srv_map.response.map.info.height -1;
         //x_pos = srv_map.response.map.info.origin.position.x;
         //y_pos = srv_map.response.map.info.origin.position.y;
         int sorted_costmap[map_size_i_][map_size_j_];
@@ -116,22 +121,24 @@ if (!sAct.bumper_pressed_center)
         std::cout << "Total Map_size_i_"<<"="<<map_size_i_<< std::endl;
         std::cout << "Total Map_size_j_"<<"="<<map_size_j_<< std::endl;
 
-        for (i=map_size_i_; i>=0; i-- )
+        //for (j=map_size_j_; j>=0; j-- )
+        for (j=0; j<=map_size_j_; j++ )
           {
-               for (j=0; j<=map_size_j_; j++ )
+               for (i=0; i<=map_size_i_; i++ )
                {
                     if (srv_map.response.map.data[u] == 100 && firstobstacle)
                     {
-                      x_first_ob = j;
-                      y_first_ob = i;
+                      x_first_ob = i;
+                      y_first_ob = j;
+                      //map_size_j_ - j
                       firstobstacle = false;
                     }
                     if (srv_map.response.map.data[u] >= 0)
                     {
-                      sorted_costmap[j][i] = srv_map.response.map.data[u];    
+                      sorted_costmap[i][j] = srv_map.response.map.data[u];    
                       //std::cout << costmap[i][j]<<",";
                       sendEnter = true;
-                      jcount ++;
+                      icount ++;
                     }
                     u++;
                     
@@ -141,16 +148,16 @@ if (!sAct.bumper_pressed_center)
                {
                  //std::cout << std::endl; 
                  sendEnter = false;
-                 icount ++;
-                 if (jcount > countbefore)  
+                 jcount ++;
+                 if (icount > countbefore)  
                  {
-                    countbefore = jcount;
+                    countbefore = icount;
                  }
-                 jcount = 0;
+                 icount = 0;
                }
                  
           }
-      std::cout << "Used Map size"<<"="<<"y:"<<icount <<","<<"x:"<<countbefore<< std::endl;
+      std::cout << "Used Map size"<<"="<<"y:"<<jcount <<","<<"x:"<<countbefore<< std::endl;
       startGetMap = false;
       }
     else
@@ -170,13 +177,17 @@ if (!sAct.bumper_pressed_center)
   //goal.target_pose.pose.position.x = 0.5;
   //goal.target_pose.pose.position.y = 0.5;
   //goal.target_pose.pose.orientation.w = 1.0;
-  std::cout << "x_origin"<<"="<<srv_map.response.map.info.origin.position.x<< std::endl;
-  std::cout << "y_origin"<<"="<<srv_map.response.map.info.origin.position.y<< std::endl;
+  double x_origin = srv_map.response.map.info.origin.position.x;
+  double y_origin = srv_map.response.map.info.origin.position.y;
+  std::cout << "x_origin"<<"="<<x_origin<< std::endl;
+  std::cout << "y_origin"<<"="<<y_origin<< std::endl;
+  double x_goal_pos = x_first_ob * map_res + srv_map.response.map.info.origin.position.x;
+  double y_goal_pos = y_first_ob * map_res + srv_map.response.map.info.origin.position.y;
     if (GetMapClient.call(srv_map))
       {
         map_res = srv_map.response.map.info.resolution;
-        goal.target_pose.pose.position.x =  x_first_ob * map_res + goal_x;
-        goal.target_pose.pose.position.y = y_first_ob * map_res + goal_y;
+        goal.target_pose.pose.position.x = 0.5;
+        goal.target_pose.pose.position.y = 0.5;
         goal.target_pose.pose.orientation.w = 1.0;
       }
     else
@@ -187,19 +198,19 @@ if (!sAct.bumper_pressed_center)
   
 std::cout << "First obstacle X"<<"="<<x_first_ob<< std::endl;
 std::cout << "First obstacle Y"<<"="<<y_first_ob<< std::endl;
-std::cout << "First obstacle X * mapres"<<"="<<x_first_ob * map_res<< std::endl;
-std::cout << "First obstacle Y * mapres"<<"="<<y_first_ob * map_res<< std::endl;
-std::cout << "Turtlebot pos_x"<<"="<<sAct.x_pose<< std::endl;
-std::cout << "Turtlebot pos_y"<<"="<<sAct.y_pose<< std::endl;
-  visualization_msgs::Marker marker;
+std::cout << "First obstacle X * mapres"<<"="<<x_goal_pos<< std::endl;
+std::cout << "First obstacle Y * mapres"<<"="<<y_goal_pos<< std::endl;
+std::cout << "Turtlebot pos_x"<<"="<<x_InitialPose<< std::endl;
+std::cout << "Turtlebot pos_y"<<"="<<y_InitialPose<< std::endl;
+
 marker.header.frame_id = "/map";
 marker.header.stamp = ros::Time();
-marker.ns = "my_namespace";
+marker.ns = "FirstObstacle";
 marker.id = 0;
 marker.type = visualization_msgs::Marker::SPHERE;
 marker.action = visualization_msgs::Marker::ADD;
-marker.pose.position.x = x_first_ob * -1;
-marker.pose.position.y = y_first_ob * -1;
+marker.pose.position.x = x_first_ob * map_res + srv_map.response.map.info.origin.position.x;
+marker.pose.position.y = y_first_ob * map_res + srv_map.response.map.info.origin.position.y;
 marker.pose.position.z = 0;
 marker.pose.orientation.x = 0.0;
 marker.pose.orientation.y = 0.0;
@@ -213,6 +224,73 @@ marker.color.r = 0.0;
 marker.color.g = 1.0;
 marker.color.b = 0.0;
 vis_pub.publish( marker );
+
+marker.header.frame_id = "/map";
+marker.header.stamp = ros::Time();
+marker.ns = "map origin";
+marker.id = 0;
+marker.type = visualization_msgs::Marker::SPHERE;
+marker.action = visualization_msgs::Marker::ADD;
+marker.pose.position.x = 0.5;
+marker.pose.position.y = 0.5;
+marker.pose.position.z = 0;
+marker.pose.orientation.x = 0.0;
+marker.pose.orientation.y = 0.0;
+marker.pose.orientation.z = 0.0;
+marker.pose.orientation.w = 1.0;
+marker.scale.x = 0.3;
+marker.scale.y = 0.3;
+marker.scale.z = 0.3;
+marker.color.a = 1.0; // Don't forget to set the alpha!
+marker.color.r = 1.0;
+marker.color.g = 0.0;
+marker.color.b = 0.0;
+vis_pub.publish( marker );
+
+marker.header.frame_id = "/map";
+marker.header.stamp = ros::Time();
+marker.ns = "costmap cell left corner";
+marker.id = 0;
+marker.type = visualization_msgs::Marker::SPHERE;
+marker.action = visualization_msgs::Marker::ADD;
+marker.pose.position.x = map_res + srv_map.response.map.info.origin.position.x;
+marker.pose.position.y = map_res + srv_map.response.map.info.origin.position.y;
+marker.pose.position.z = 0;
+marker.pose.orientation.x = 0.0;
+marker.pose.orientation.y = 0.0;
+marker.pose.orientation.z = 0.0;
+marker.pose.orientation.w = 1.0;
+marker.scale.x = 0.3;
+marker.scale.y = 0.3;
+marker.scale.z = 0.3;
+marker.color.a = 1.0; // Don't forget to set the alpha!
+marker.color.r = 0.0;
+marker.color.g = 0.0;
+marker.color.b = 1.0;
+vis_pub.publish( marker );
+
+marker.header.frame_id = "/map";
+marker.header.stamp = ros::Time();
+marker.ns = "Robot InitialPose";
+marker.id = 0;
+marker.type = visualization_msgs::Marker::CUBE;
+marker.action = visualization_msgs::Marker::ADD;
+marker.pose.position.x = x_InitialPose;
+marker.pose.position.y = y_InitialPose;
+marker.pose.position.z = 0;
+marker.pose.orientation.x = 0.0;
+marker.pose.orientation.y = 0.0;
+marker.pose.orientation.z = 0.0;
+marker.pose.orientation.w = 1.0;
+marker.scale.x = 0.3;
+marker.scale.y = 0.3;
+marker.scale.z = 0.3;
+marker.color.a = 1.0; // Don't forget to set the alpha!
+marker.color.r = 0.0;
+marker.color.g = 0.0;
+marker.color.b = 1.0;
+vis_pub.publish( marker );
+
   //https://answers.ros.org/question/197046/sending-map-co-ordinates-as-goal-to-move_base/ 
   ROS_INFO_STREAM("Sending goal");
   ac.sendGoal(goal);

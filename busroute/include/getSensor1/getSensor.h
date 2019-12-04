@@ -41,7 +41,8 @@ cliffDetected_center(false),
 cliffDetected_floor(false),
 wheeldropped(false),
 wheeldropped_right(false),
-wheeldropped_left(false)
+wheeldropped_left(false),
+poseFirstrun(true)
 
 {
 //Initializing subscribers and publishers:
@@ -76,7 +77,8 @@ bool wheeldropped_right;
 bool wheeldropped_left;
 bool wheeldropped;
 // Variables used for pose:
-double x_pose, y_pose;
+float x_InitialPose, y_InitialPose , x_currentPose, y_currentPose;
+bool poseFirstrun;
 
 
 geometry_msgs::Twist vel;
