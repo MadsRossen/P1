@@ -7,7 +7,7 @@ Panels:
         - /Global Options1
         - /Status1
         - /Grid1
-        - /Busroute Markes1
+        - /Map1
       Splitter Ratio: 0.5
     Tree Height: 663
   - Class: rviz/Selection
@@ -54,11 +54,11 @@ Visualization Manager:
       Value: true
     - Alpha: 0.699999988
       Class: rviz/Map
-      Color Scheme: map
+      Color Scheme: costmap
       Draw Behind: false
       Enabled: true
       Name: Map
-      Topic: /map
+      Topic: /move_base/global_costmap/costmap
       Unreliable: false
       Use Timestamp: false
       Value: true
