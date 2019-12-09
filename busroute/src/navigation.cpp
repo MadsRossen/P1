@@ -29,19 +29,21 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 
 //typedef actionlib::SimpleActionClient<kobuki_msgs::AutoDockingAction> AutoDockingClient;
 
-int exploremapping(int returnerValue, bool runningexp)
-  {
-      if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME,
-                                        ros::console::levels::Debug)) {
-        ros::console::notifyLoggerLevelsChanged();
+int exploremapping(int returnerValue)
+{
+  if(ros::ok)
+  {  
+    if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME,
+                                ros::console::levels::Debug)) {
+      ros::console::notifyLoggerLevelsChanged();
       }
       explore::Explore explore;
       ros::spin();
       //ros::spinOnce();
       //r.sleep();
-    return returnerValue + 1;
   }
-
+  return returnerValue + 1;
+}
 int main(int argc, char **argv){
   bool runningnav = false;
   bool runningexp = true;
@@ -61,8 +63,10 @@ int main(int argc, char **argv){
   int x_first_ob, y_first_ob;
   
   ros::init(argc, argv, "explore");
+  int runnner = exploremapping(1);
+  std::cout << "runner"<<"="<<runnner<< std::endl;
 
-  
+  ros::init(argc, argv, "cleaner");
   // Calling new Sensoract class:
   SensorAct sAct;
   //Task task;
@@ -91,11 +95,9 @@ int main(int argc, char **argv){
 
 float x_InitialPose = sAct.x_currentPose;
 float y_InitialPose = sAct.y_currentPose;
-ros::Rate r(25);
-
 //runningnav = true;
 //running = true;
-while (runningnav)
+while (runnner == 2 && ros::ok)
 {
   //tell the clients that we want to spin a thread by default
     MoveBaseClient ac("move_base", true);
@@ -260,11 +262,13 @@ while (runningnav)
           if (ii >= X_MAX)
           {
             runPathPlanner = false; 
-            runningnav = false; 
+            runningnav = false;
+            ROS_INFO("If1.1");
           }
           else
           {
             ii = X_MAX;
+            ROS_INFO("If1.2");
           } 
         }
         else 
@@ -276,11 +280,13 @@ while (runningnav)
               ii = X_MAX;
               jj = r_U_C - 0.5;
               turn = 2;
+              ROS_INFO("If2.1");
             }
             else
             {
               ii = 0.5;
               turn = 1;
+              ROS_INFO("If2.2");
             }
           }
           else
@@ -290,11 +296,13 @@ while (runningnav)
               ii = 0.5;
               jj = r_U_C -0.5;
               turn = 2;
+              ROS_INFO("If3.1");
             }
             else
             {
               ii = X_MAX;
               turn = 1;
+              ROS_INFO("If3.2");
             }
           }
         }

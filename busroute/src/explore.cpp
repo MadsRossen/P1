@@ -296,6 +296,7 @@ void Explore::stop()
   {
     ROS_INFO("Stopped = false.");
   }
+  ros::shutdown();
 }
 
 };  // namespace explore
