@@ -87,7 +87,8 @@ while (runningexp)
     explore.~Explore();
   }
   ros::spin();
-  
+  //ros::spinOnce();
+  //r.sleep();
 }
 //runningnav = true;
 //running = true;
@@ -304,18 +305,20 @@ while (runningnav)
         ac.sendGoal(goal);
         vis_pub.publish( marker );
       }
-    ros::spinOnce();
-    r.sleep();
+    //ros::spinOnce();
+    //r.sleep();
+    ros::spin();
     }
   
     //Algorithm for defining new goal in the mapped area. 
-
-  ros::spinOnce();
-  r.sleep();
+  ros::spin();
+  //ros::spinOnce();
+  //r.sleep();
   }
   //https://answers.ros.org/question/197046/sending-map-co-ordinates-as-goal-to-move_base/ 
-ros::spinOnce();
-r.sleep();
+ros::spin();
+//ros::spinOnce();
+//r.sleep();
 }
 
   ROS_INFO("DONE MAIN TASK");
