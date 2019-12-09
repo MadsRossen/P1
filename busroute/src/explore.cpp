@@ -288,11 +288,14 @@ void Explore::start()
 
 void Explore::stop()
 {
-  move_base_client_.cancelAllGoals();
-  exploring_timer_.stop();
-  ROS_INFO("Exploration stopped.");
   stopped = false;
-  
+  move_base_client_.cancelAllGoals();
+  //exploring_timer_.stop();
+  ROS_INFO("Exploration stopped.");
+  if (!stopped)
+  {
+    ROS_INFO("Stopped = false.");
+  }
 }
 
 };  // namespace explore

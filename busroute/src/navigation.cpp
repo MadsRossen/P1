@@ -29,6 +29,19 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 
 //typedef actionlib::SimpleActionClient<kobuki_msgs::AutoDockingAction> AutoDockingClient;
 
+int exploremapping(int returnerValue, bool runningexp)
+  {
+      if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME,
+                                        ros::console::levels::Debug)) {
+        ros::console::notifyLoggerLevelsChanged();
+      }
+      explore::Explore explore;
+      ros::spin();
+      //ros::spinOnce();
+      //r.sleep();
+    return returnerValue + 1;
+  }
+
 int main(int argc, char **argv){
   bool runningnav = false;
   bool runningexp = true;
@@ -48,6 +61,8 @@ int main(int argc, char **argv){
   int x_first_ob, y_first_ob;
   
   ros::init(argc, argv, "explore");
+
+  
   // Calling new Sensoract class:
   SensorAct sAct;
   //Task task;
@@ -64,7 +79,8 @@ int main(int argc, char **argv){
   nav_msgs::GetMap srv_map;
   ros::Publisher vis_pub = nh.advertise<visualization_msgs::Marker>( "visualization_marker", 0 );
   visualization_msgs::Marker marker;
-
+  
+  ros::MultiThreadedSpinner spinner(4);
   //AutoDockingClient dc ("dock_drive_action", true);
 
    // Create docking goal object:
@@ -76,20 +92,7 @@ int main(int argc, char **argv){
 float x_InitialPose = sAct.x_currentPose;
 float y_InitialPose = sAct.y_currentPose;
 ros::Rate r(25);
-while (runningexp)
-{
-  explore::Explore explore;
-  if (!explore.stopped)
-  {   
-    runningexp = false;
-    runningnav = true;
-    running = true;
-    explore.~Explore();
-  }
-  ros::spin();
-  //ros::spinOnce();
-  //r.sleep();
-}
+
 //runningnav = true;
 //running = true;
 while (runningnav)
@@ -164,7 +167,6 @@ while (runningnav)
   move_base_msgs::MoveBaseGoal goal;
 
   map_res = srv_map.response.map.info.resolution;
-
   //Variables for the first obstacle detected from lower left corner of costmap.
   double x_firstObst_pos = x_first_ob * map_res + srv_map.response.map.info.origin.position.x;
   std::cout << "x_firstIbst_pos"<<"="<<x_firstObst_pos<< std::endl;
@@ -305,20 +307,11 @@ while (runningnav)
         ac.sendGoal(goal);
         vis_pub.publish( marker );
       }
-    //ros::spinOnce();
-    //r.sleep();
-    ros::spin();
     }
-  
     //Algorithm for defining new goal in the mapped area. 
-  ros::spin();
-  //ros::spinOnce();
-  //r.sleep();
   }
   //https://answers.ros.org/question/197046/sending-map-co-ordinates-as-goal-to-move_base/ 
-ros::spin();
-//ros::spinOnce();
-//r.sleep();
+  ros::spin();
 }
 
   ROS_INFO("DONE MAIN TASK");
