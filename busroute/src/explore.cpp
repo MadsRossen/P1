@@ -38,6 +38,10 @@
 #include <explore1/explore.h>
 
 #include <thread>
+#include <ros/ros.h>
+#include <std_msgs/String.h>
+
+#include <iostream>
 
 inline static bool operator==(const geometry_msgs::Point& one,
                               const geometry_msgs::Point& two)
@@ -283,6 +287,7 @@ void Explore::reachedGoal(const actionlib::SimpleClientGoalState& status,
 void Explore::start()
 {
   exploring_timer_.start();
+  stopped = true;
   
 }
 
@@ -290,26 +295,48 @@ void Explore::stop()
 {
   stopped = false;
   move_base_client_.cancelAllGoals();
-  //exploring_timer_.stop();
+  exploring_timer_.stop();
   ROS_INFO("Exploration stopped.");
-  if (!stopped)
-  {
-    ROS_INFO("Stopped = false.");
-  }
-  ros::shutdown();
 }
 
 };  // namespace explore
 
-/*int main(int argc, char** argv)
+int main(int argc, char** argv)
 {
   ros::init(argc, argv, "explore");
-  if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME,
+  ros::NodeHandle node_handle;
+  ros::Publisher publisher = node_handle.advertise<std_msgs::String>("hello_publisher", 1);
+  std_msgs::String str;
+  explore::Explore explore;
+  ros::Rate loop_rate(25);
+
+  
+  while(ros::ok)
+  {
+    /*std::stringstream ss;
+    ss
+    <<"running";
+    msg.data = ss.str();*/
+    /*if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME,
                                      ros::console::levels::Debug)) {
     ros::console::notifyLoggerLevelsChanged();
-  }
-  explore::Explore explore;
-  ros::spin();
+    }*/
+    if(explore.stopped == true)
+    {
+      str.data = "running";
+      //ROS_INFO("Sending running.");
+    }
+    if(explore.stopped == false)
+    {
+      str.data = "stopped";
+      //ROS_INFO("SENDING STOPPED.");
+    }
+    publisher.publish(str);
+     ros::spinOnce();
+      loop_rate.sleep();
+    
 
+  }
+  ros::spin();
   return 0;
-}*/
+}

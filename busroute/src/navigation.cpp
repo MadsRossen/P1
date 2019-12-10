@@ -15,6 +15,9 @@
 #include <nav_msgs/GetMap.h>
 #include <visualization_msgs/Marker.h>
 //#include <kobuki_msgs/AutoDockingAction.h>
+#include "ros/callback_queue.h"
+#include "std_msgs/String.h"
+#include <iostream>
 
 /*
 Here we do all the action. We include these packages
@@ -29,7 +32,7 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 
 //typedef actionlib::SimpleActionClient<kobuki_msgs::AutoDockingAction> AutoDockingClient;
 
-int exploremapping(int returnerValue)
+/*int exploremapping(int returnerValue)
 {
   if(ros::ok)
   {  
@@ -43,7 +46,9 @@ int exploremapping(int returnerValue)
       //r.sleep();
   }
   return returnerValue + 1;
-}
+}*/
+ 
+
 int main(int argc, char **argv){
   bool runningnav = false;
   bool runningexp = true;
@@ -61,13 +66,16 @@ int main(int argc, char **argv){
   int countbefore = 0;
   int icount = 0;
   int x_first_ob, y_first_ob;
-  
-  ros::init(argc, argv, "explore");
+  int runner = 1;
+
+ 
+  /*ros::init(argc, argv, "explore");
   int runnner = exploremapping(1);
   std::cout << "runner"<<"="<<runnner<< std::endl;
-  ros::shutdown();
-
+  //ros::shutdown();
+*/
   ros::init(argc, argv, "cleaner");
+
   // Calling new Sensoract class:
   SensorAct sAct;
   // Create the soundClient:
@@ -78,7 +86,9 @@ int main(int argc, char **argv){
   nav_msgs::GetMap srv_map;
   ros::Publisher vis_pub = nh.advertise<visualization_msgs::Marker>( "visualization_marker", 0 );
   visualization_msgs::Marker marker;
-  ros::spinOnce();
+  ros::Rate loop_rate(25);
+  
+
   //AutoDockingClient dc ("dock_drive_action", true);
 
    // Create docking goal object:
@@ -91,7 +101,9 @@ float x_InitialPose = sAct.x_currentPose;
 float y_InitialPose = sAct.y_currentPose;
 //runningnav = true;
 //running = true;
-while (runnner == 2 && ros::ok)
+while (ros::ok)
+{
+while (sAct.runner == 2)
 {
   //tell the clients that we want to spin a thread by default
     MoveBaseClient ac("move_base", true);
@@ -325,16 +337,23 @@ while (runnner == 2 && ros::ok)
       if(ac.getState() == actionlib::SimpleClientGoalState::ABORTED)
       { 
         ROS_INFO("The base failed to archive the goal");
-        ac.cancelAllGoals();
-        ac.sendGoal(goal);
+        //ac.cancelGoal();
+        //ac.sendGoal(goal);
         vis_pub.publish( marker );
       }
+    ros::spinOnce();
+    loop_rate.sleep();
     }
+  ros::spinOnce();
+  loop_rate.sleep();  
   }
   //https://answers.ros.org/question/197046/sending-map-co-ordinates-as-goal-to-move_base/ 
-  ros::spin();
+  ros::spinOnce();
+  loop_rate.sleep();
 }
-
+  ros::spinOnce();
+  loop_rate.sleep();
+}
   ROS_INFO("DONE MAIN TASK");
   return 0;
 

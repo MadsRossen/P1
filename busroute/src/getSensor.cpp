@@ -15,6 +15,8 @@
 #include <getSensor1/getSensor.h>
 #include <nav_msgs/OccupancyGrid.h>
 #include <nav_msgs/MapMetaData.h>
+#include "ros/callback_queue.h"
+#include "std_msgs/String.h"
 //#include "getSensor.h"
 
 /*
@@ -248,5 +250,19 @@ void SensorAct::robotPoseCB(const geometry_msgs::PoseConstPtr msg)
      
      
 }
+
+void SensorAct::callback(const std_msgs::String::ConstPtr& msg)
+  {
+    //std::cout << "I heard: [" << msg->data << "]" << std::endl;
+    //ROS_INFO_STREAM(msg->data);
+    if (msg->data == "running")
+    {
+      runner = 1;
+    }
+    if (msg->data == "stopped")
+    {
+      runner = 2;
+    }
+  }
 
 
