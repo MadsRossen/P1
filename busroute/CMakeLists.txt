@@ -194,7 +194,7 @@ include_directories(${OpenCV_INCLUDE_DIR})
 
 #add_executable(navigation src/navigation.cpp)
 #add_dependencies(navigation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_library(myLib src/getSensor.cpp )
+add_library(myLib src/getSensor.cpp src/color.cpp )
 #target_link_libraries(navigation
   #${catkin_LIBRARIES}
   #myLib
@@ -212,9 +212,9 @@ add_executable(explore
   src/explore.cpp
   src/frontier_search.cpp
   src/navigation.cpp
-  src/colordetect.cpp
+  #src/colordetect.cpp
   #src/tasks.cpp
-  #src/color.cpp
+  
 
 )
 add_dependencies(explore ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

@@ -4,8 +4,8 @@
 #include <getSensor1/getSensor.h>
 #include <explore1/explore.h>
 #include <geometry_msgs/Twist.h>
-#include <color/colordetect.h> 
-//#include <color/color.h>
+//#include <color/colordetect.h> 
+#include <color/color.h>
 #include <opencv2/highgui/highgui.hpp>
 #include "opencv2/opencv.hpp"
 #include <cv_bridge/cv_bridge.h>
@@ -65,26 +65,20 @@ int main(int argc, char **argv){
   ros::init(argc, argv, "explore");
   int runnner = exploremapping(1);
   std::cout << "runner"<<"="<<runnner<< std::endl;
+  ros::shutdown();
 
   ros::init(argc, argv, "cleaner");
   // Calling new Sensoract class:
   SensorAct sAct;
-  //Task task;
-  // Calling new explore class:
-  
   // Create the soundClient:
   sound_play::SoundClient sc;
-  
-  //LineDetect det;
-  //ImageConverter imgcon;
-  
+  ImageConverter imgc;
   ros::NodeHandle nh;
   ros::ServiceClient GetMapClient = nh.serviceClient<nav_msgs::GetMap>("dynamic_map");
   nav_msgs::GetMap srv_map;
   ros::Publisher vis_pub = nh.advertise<visualization_msgs::Marker>( "visualization_marker", 0 );
   visualization_msgs::Marker marker;
-  
-  ros::MultiThreadedSpinner spinner(4);
+  ros::spinOnce();
   //AutoDockingClient dc ("dock_drive_action", true);
 
    // Create docking goal object:
@@ -251,6 +245,21 @@ while (runnner == 2 && ros::ok)
         ROS_INFO("Turtlebot is being lifted or tilted! Goal canceled. Heading back to docking station");
         sAct.wheeldropped = false;
       }
+      if (imgc.trashDetected_blue)
+      {
+        ac.cancelGoal();
+        std::cout << "Blue object detected"<< std::endl;
+      }
+      if (imgc.trashDetected_green)
+      {
+        ac.cancelGoal();
+        std::cout << "Green object detected"<< std::endl;
+      }
+      if (imgc.trashDetected_red)
+      {
+        ac.cancelGoal();
+        std::cout << "Red object detected"<< std::endl;
+      }
   
       //If we receive result and its succeded:
       if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
@@ -321,7 +330,6 @@ while (runnner == 2 && ros::ok)
         vis_pub.publish( marker );
       }
     }
-    //Algorithm for defining new goal in the mapped area. 
   }
   //https://answers.ros.org/question/197046/sending-map-co-ordinates-as-goal-to-move_base/ 
   ros::spin();

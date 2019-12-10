@@ -9,7 +9,10 @@ class ImageConverter
 {
   public:
   ImageConverter():
-  imageTransport_(nh_)
+  imageTransport_(nh_),
+  trashDetected_red(false),
+  trashDetected_green(false),
+  trashDetected_blue(false)
   {
     // Subscrive to input video feed and publish output video feed
     image_sub_ = imageTransport_.subscribe("/camera/rgb/image_raw", 1, &ImageConverter::imageCb, this);
@@ -20,6 +23,10 @@ class ImageConverter
   {
        
   };
+public:
+bool trashDetected_red;
+bool trashDetected_green;
+bool trashDetected_blue;
 private:
 ros::NodeHandle nh_;
   image_transport::ImageTransport imageTransport_;
