@@ -58,7 +58,7 @@ Visualization Manager:
       Draw Behind: false
       Enabled: true
       Name: Map
-      Topic: /move_base/global_costmap/costmap
+      Topic: /map
       Unreliable: false
       Use Timestamp: false
       Value: true
@@ -333,7 +333,7 @@ Visualization Manager:
       Marker Topic: visualization_marker
       Name: Marker
       Namespaces:
-        {}
+        Goal objective: true
       Queue Size: 100
       Value: true
   Enabled: true

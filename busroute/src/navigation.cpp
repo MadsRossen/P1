@@ -188,7 +188,7 @@ while (runnner == 2 && ros::ok)
   //Bool for running the pathplanner loop.
   bool runPathPlanner = true;
   //Variables for the size of the mapped costmap with a safety margin for the turtlebot.
-  double X_MAX = x_mappedsize - 0.5; 
+  double X_MAX = x_mappedsize - 0.8; 
   double Y_MIN = y_firstObst_pos + 0.5;
   //Variable for the Right upper corner with a safety margin for the turtlebot.
   double r_U_C = y_mappedsize + y_firstObst_pos - 0.5;
@@ -196,7 +196,7 @@ while (runnner == 2 && ros::ok)
   double jj = r_U_C;
   std::cout << "r_U_C"<<"="<<x_InitialPose<< std::endl;
   double ii = 0.5;
-  int turn = 1;
+  int turn = 2;
   //Bool for running goalState loop.
   bool goalreached = false; 
 
@@ -255,7 +255,7 @@ while (runnner == 2 && ros::ok)
       //If we receive result and its succeded:
       if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
       {
-        ROS_INFO("Reached Goal destination!");
+        std::cout << "Reached Goal destination"<< std::endl;
         goalreached = true;
         if (jj <= Y_MIN)
         {
@@ -263,46 +263,51 @@ while (runnner == 2 && ros::ok)
           {
             runPathPlanner = false; 
             runningnav = false;
-            ROS_INFO("If1.1");
+            std::cout << "If1.1"<< std::endl;
           }
           else
           {
             ii = X_MAX;
-            ROS_INFO("If1.2");
+            //ROS_INFO("If1.2");
+            std::cout << "If1.2"<< std::endl;
           } 
         }
         else 
         {
           if (ii >= X_MAX)
           {
-            if (turn = 1)
+            if (turn == 1)
             {
               ii = X_MAX;
-              jj = r_U_C - 0.5;
+              jj = jj - 0.5;
               turn = 2;
-              ROS_INFO("If2.1");
+              //ROS_INFO("If2.1");
+              std::cout << "If2.1"<< std::endl;
             }
             else
             {
               ii = 0.5;
               turn = 1;
-              ROS_INFO("If2.2");
+              //ROS_INFO("If2.2");
+              std::cout << "If2.2"<< std::endl;
             }
           }
           else
           {
-            if (turn = 1)
+            if (turn == 1)
             {
               ii = 0.5;
-              jj = r_U_C -0.5;
+              jj = jj - 0.5;
               turn = 2;
-              ROS_INFO("If3.1");
+              //ROS_INFO("If3.1");
+              std::cout << "If3.1"<< std::endl;
             }
             else
             {
               ii = X_MAX;
               turn = 1;
-              ROS_INFO("If3.2");
+              //ROS_INFO("If3.2");
+              std::cout << "If3.2"<< std::endl;
             }
           }
         }
