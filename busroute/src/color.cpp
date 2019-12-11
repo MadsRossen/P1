@@ -12,17 +12,16 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
       ROS_ERROR("cv_bridge exception: %s", e.what());
       return;
     }
-    // shelf is used for testing in gazebo
-    int shelfLowerB = 30;
-    int shelfLowerG = 80;
+    // shelf is used for testing in gazebo (changed to see the white cube)
+    int shelfLowerB = 160;
+    int shelfLowerG = 160;
     int shelfLowerR = 160;
-    int shelfUpperB = 80;
-    int shelfUpperG = 150;
-    int shelfUpperR = 220; 
-
+    int shelfUpperB = 170;
+    int shelfUpperG = 170;
+    int shelfUpperR = 170; 
 
     
-    int blueLowerB = 50;
+    int blueLowerB = 20;
     int blueLowerG = 0;
     int blueLowerR = 0;
     int blueUpperB = 110;
@@ -30,7 +29,7 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     int blueUpperR = 25; 
     
     int greenLowerB = 0;
-    int greenLowerG = 30;
+    int greenLowerG = 10;
     int greenLowerR = 0;
     int greenUpperB = 45;
     int greenUpperG = 80;
@@ -38,23 +37,23 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
 
     int redLowerB = 0;
     int redLowerG = 0;
-    int redLowerR = 100;
-    int redUpperB = 25 ;
-    int redUpperG = 10;
+    int redLowerR = 80;
+    int redUpperB = 35 ;
+    int redUpperG = 20;
     int redUpperR = 160; 
-    
-
-
-
-    
+        
+  
     cv::Mat mask, part, maskBlue, maskGreen, maskRed, maskShelf;
     
-
     cv::inRange(cvImage->image, cv::Scalar(blueLowerB,blueLowerG,blueLowerR), cv::Scalar(blueUpperB,blueUpperG,blueUpperR), maskBlue);
     cv::inRange(cvImage->image, cv::Scalar(greenLowerB,greenLowerG,greenLowerR), cv::Scalar(greenUpperB,greenUpperG,greenUpperR), maskGreen);
     cv::inRange(cvImage->image, cv::Scalar(redLowerB,redLowerG,redLowerR), cv::Scalar(redUpperB,redUpperG,redUpperR), maskRed);
 
     mask = maskBlue + maskGreen + maskRed;
+    maskBlue = maskBlue(cv::Range(400,480),cv::Range(200,465));
+    maskGreen = maskGreen(cv::Range(400,480),cv::Range(200,465));
+    maskRed = maskRed(cv::Range(400,480),cv::Range(200,465));
+
   
     cv::inRange(cvImage->image, cv::Scalar(shelfLowerB,shelfLowerG,shelfLowerR), cv::Scalar(shelfUpperB,shelfUpperG,shelfUpperR), maskShelf);
     part = mask(cv::Range(400,480),cv::Range(200,465));
@@ -70,6 +69,8 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     using namespace std;
 
 
+
+
 	// Setup SimpleBlobDetector parameters.
 	SimpleBlobDetector::Params params;
 
@@ -80,7 +81,7 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
 
 	// Filter by Area.
 	params.filterByArea = true;
-	params.minArea = 25;
+	params.minArea = 250;
   params.maxArea = 100000;
 
   // filter by color
@@ -100,6 +101,7 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
 	params.minInertiaRatio = 0.71;
 
 
+
   Ptr<SimpleBlobDetector> detector = SimpleBlobDetector::create(params); 
   
   // Storage for blobs
@@ -111,11 +113,16 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
 	Mat im_with_keypoints;
 	drawKeypoints( blob, keypoints, im_with_keypoints, Scalar(0,0,255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
   
- // detector->detect( blob, keypoints);
-  cout<<keypoints[1].pt<<endl;
+  // detector->detect( blob, keypoints);
+  // cout<<keypoints[1].pt<<endl;
+  
   imshow("keypoints", im_with_keypoints);
 
-  
+  if (keypoints.size() >0)
+  {
+    cout<< "testetstests" << endl;
+  }
+
     int whitePixels_blue = cv::countNonZero(maskBlue);
     int whitePixels_red = cv::countNonZero(maskRed);
     int whitePixels_green = cv::countNonZero(maskGreen);
