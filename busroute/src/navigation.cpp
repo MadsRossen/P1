@@ -14,10 +14,11 @@
 //#include <task1/tasks.h>
 #include <nav_msgs/GetMap.h>
 #include <visualization_msgs/Marker.h>
-//#include <kobuki_msgs/AutoDockingAction.h>
+#include <kobuki_msgs/AutoDockingAction.h>
 #include "ros/callback_queue.h"
 #include "std_msgs/String.h"
 #include <iostream>
+#include <actionlib/client/simple_client_goal_state.h>
 
 /*
 Here we do all the action. We include these packages
@@ -30,7 +31,7 @@ The simple_action_client package (Package for starting the action client)
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
-//typedef actionlib::SimpleActionClient<kobuki_msgs::AutoDockingAction> AutoDockingClient;
+typedef actionlib::SimpleActionClient<kobuki_msgs::AutoDockingAction> AutoDockingClient;
 
 /*int exploremapping(int returnerValue)
 {
@@ -89,13 +90,13 @@ int main(int argc, char **argv){
   ros::Rate loop_rate(25);
   
 
-  //AutoDockingClient dc ("dock_drive_action", true);
+  AutoDockingClient dc ("dock_drive_action", true);
 
    // Create docking goal object:
-  //kobuki_msgs::AutoDockingGoal dockGoal;
+  kobuki_msgs::AutoDockingGoal dockGoal;
 
   // Assign the docking initial state:
-  //actionlib::SimpleClientGoalState dock_state = actionlib::SimpleClientGoalState::LOST;
+  actionlib::SimpleClientGoalState dock_state = actionlib::SimpleClientGoalState::LOST;
 
 float x_InitialPose = sAct.x_currentPose;
 float y_InitialPose = sAct.y_currentPose;
@@ -194,7 +195,7 @@ while (sAct.runner == 2)
   //Bool for running the pathplanner loop.
   bool runPathPlanner = true;
   //Variables for the size of the mapped costmap with a safety margin for the turtlebot.
-  double X_MAX = x_mappedsize - 0.8; 
+  double X_MAX = x_mappedsize - 0.5; 
   double Y_MIN = y_firstObst_pos + 0.5;
   //Variable for the Right upper corner with a safety margin for the turtlebot.
   double r_U_C = y_mappedsize + y_firstObst_pos - 0.5;
@@ -256,6 +257,8 @@ while (sAct.runner == 2)
         ac.cancelGoal(); 
         ROS_INFO("Turtlebot is being lifted or tilted! Goal canceled. Heading back to docking station");
         sAct.wheeldropped = false;
+        runPathPlanner = false; 
+        runningnav = false;
       }
       if (imgc.trashDetected_blue)
       {
@@ -347,7 +350,37 @@ while (sAct.runner == 2)
   ros::spinOnce();
   loop_rate.sleep();  
   }
-  //https://answers.ros.org/question/197046/sending-map-co-ordinates-as-goal-to-move_base/ 
+    goal.target_pose.header.frame_id = "/map";
+    goal.target_pose.header.stamp = ros::Time::now();
+    goal.target_pose.pose.position.x = ii;
+    goal.target_pose.pose.position.y = jj;
+    goal.target_pose.pose.orientation.w = 1.0;
+    ac.sendGoal(goal);
+
+    if(ac.getState() == actionlib::SimpleClientGoalState::ABORTED)
+      { 
+        ROS_INFO("The base failed to archive the goal");
+        ac.cancelGoal();
+        ac.sendGoal(goal);
+        vis_pub.publish( marker );
+      }
+
+  dc.sendGoal(dockGoal);
+  ros::Time time = ros::Time::now();
+  // Monitor progress
+  while (!dc.waitForResult(ros::Duration(3))) {
+
+    dock_state = dc.getState();
+    ROS_INFO("Docking status: %s",dock_state.toString().c_str());
+
+    if (ros::Time::now() > (time+ros::Duration(1000))) {
+      ROS_INFO("Docking took more than 10 seconds, canceling.");
+      dc.cancelGoal();
+      break;
+    }// end if
+  }// end while
+  ros::spinOnce();
+  loop_rate.sleep();
 }
   ros::spinOnce();
   loop_rate.sleep();

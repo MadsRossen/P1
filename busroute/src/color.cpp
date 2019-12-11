@@ -13,6 +13,11 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
       return;
     }
     // shelf is used for testing in gazebo (changed to see the white cube)
+
+    trashDetected_blue = false;
+      trashDetected_green = false;
+      trashDetected_red = false;
+
     int shelfLowerB = 160;
     int shelfLowerG = 160;
     int shelfLowerR = 160;
@@ -63,7 +68,7 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     cv::imshow(OPENCV_WINDOW_UNCROPPED, mask);
 
 
-    cv::Mat blob = ~maskShelf;
+    cv::Mat blob = ~part;
     
     using namespace cv;
     using namespace std;
@@ -81,7 +86,7 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
 
 	// Filter by Area.
 	params.filterByArea = true;
-	params.minArea = 250;
+	params.minArea = 150;
   params.maxArea = 100000;
 
   // filter by color
