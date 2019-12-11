@@ -12,7 +12,7 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
       ROS_ERROR("cv_bridge exception: %s", e.what());
       return;
     }
-    // shelf is used for testing in 
+    // shelf is used for testing in gazebo
     int shelfLowerB = 30;
     int shelfLowerG = 80;
     int shelfLowerR = 160;
@@ -62,6 +62,59 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     cv::namedWindow(OPENCV_WINDOW,600);
     cv::imshow(OPENCV_WINDOW, part);
     cv::imshow(OPENCV_WINDOW_UNCROPPED, mask);
+
+
+    cv::Mat blob = ~maskShelf;
+    
+    using namespace cv;
+    using namespace std;
+
+
+	// Setup SimpleBlobDetector parameters.
+	SimpleBlobDetector::Params params;
+
+
+    params.thresholdStep = 10;
+    params.minThreshold = 50;
+    params.maxThreshold = 220;
+
+	// Filter by Area.
+	params.filterByArea = true;
+	params.minArea = 25;
+  params.maxArea = 100000;
+
+  // filter by color
+  params.filterByColor = true;
+  params.blobColor = 0;
+	
+  // Filter by Circularity
+	params.filterByCircularity = true;
+	params.minCircularity = 0.4;
+
+	// Filter by Convexity
+	params.filterByConvexity = true;
+	params.minConvexity = 0.87;
+
+	// Filter by Inertia
+	params.filterByInertia = true;
+	params.minInertiaRatio = 0.71;
+
+
+  Ptr<SimpleBlobDetector> detector = SimpleBlobDetector::create(params); 
+  
+  // Storage for blobs
+	vector<KeyPoint> keypoints; 
+
+ detector->detect( blob, keypoints);
+  
+
+	Mat im_with_keypoints;
+	drawKeypoints( blob, keypoints, im_with_keypoints, Scalar(0,0,255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
+  
+ // detector->detect( blob, keypoints);
+  cout<<keypoints[1].pt<<endl;
+  imshow("keypoints", im_with_keypoints);
+
   
     int whitePixels_blue = cv::countNonZero(maskBlue);
     int whitePixels_red = cv::countNonZero(maskRed);
