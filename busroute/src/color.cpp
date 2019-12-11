@@ -50,20 +50,22 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     cv::inRange(cvImage->image, cv::Scalar(redLowerB,redLowerG,redLowerR), cv::Scalar(redUpperB,redUpperG,redUpperR), maskRed);
 
     mask = maskBlue + maskGreen + maskRed;
-    maskBlue = maskBlue(cv::Range(400,480),cv::Range(200,465));
-    maskGreen = maskGreen(cv::Range(400,480),cv::Range(200,465));
-    maskRed = maskRed(cv::Range(400,480),cv::Range(200,465));
+
+    //first range is hight of image, second range is width of image
+    maskBlue = maskBlue(cv::Range(350,480),cv::Range(0,640));
+    maskGreen = maskGreen(cv::Range(350,480),cv::Range(0,640));
+    maskRed = maskRed(cv::Range(350,480),cv::Range(0,640));
 
   
     cv::inRange(cvImage->image, cv::Scalar(shelfLowerB,shelfLowerG,shelfLowerR), cv::Scalar(shelfUpperB,shelfUpperG,shelfUpperR), maskShelf);
-    part = mask(cv::Range(400,480),cv::Range(200,465));
+    part = mask(cv::Range(350,480),cv::Range(0,640));
 
     cv::namedWindow(OPENCV_WINDOW,600);
     cv::imshow(OPENCV_WINDOW, part);
     cv::imshow(OPENCV_WINDOW_UNCROPPED, mask);
 
 
-    cv::Mat blob = ~maskShelf;
+    cv::Mat blob = ~part;
     
     using namespace cv;
     using namespace std;
@@ -81,7 +83,7 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
 
 	// Filter by Area.
 	params.filterByArea = true;
-	params.minArea = 250;
+	params.minArea = 150;
   params.maxArea = 100000;
 
   // filter by color
@@ -120,8 +122,8 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
 
   if (keypoints.size() >0)
   {
-    cout<< "testetstests" << endl;
-  }
+    //cout<< "trash detected" << endl;
+  
 
     int whitePixels_blue = cv::countNonZero(maskBlue);
     int whitePixels_red = cv::countNonZero(maskRed);
@@ -151,7 +153,7 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
       trashDetected_green = false;
       trashDetected_red = false;
     }
-    
+  }
 
     cv::waitKey(3);
 
