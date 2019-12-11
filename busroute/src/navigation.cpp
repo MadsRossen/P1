@@ -272,6 +272,14 @@ while (sAct.runner == 2)
         ac.cancelGoal();
         std::cout << "Red object detected"<< std::endl;
       }
+      //if something went wrong and it did not succed:
+      if(ac.getState() == actionlib::SimpleClientGoalState::ABORTED)
+      { 
+        ROS_INFO("The base failed to archive the goal");
+        ac.cancelGoal();
+        ac.sendGoal(goal);
+        vis_pub.publish( marker );
+      }
   
       //If we receive result and its succeded:
       if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
@@ -333,23 +341,13 @@ while (sAct.runner == 2)
           }
         }
       } 
-      //if something went wrong and it did not succed:
-      if(ac.getState() == actionlib::SimpleClientGoalState::ABORTED)
-      { 
-        ROS_INFO("The base failed to archive the goal");
-        //ac.cancelGoal();
-        //ac.sendGoal(goal);
-        vis_pub.publish( marker );
-      }
     ros::spinOnce();
-    loop_rate.sleep();
+    loop_rate.sleep();  
     }
   ros::spinOnce();
   loop_rate.sleep();  
   }
   //https://answers.ros.org/question/197046/sending-map-co-ordinates-as-goal-to-move_base/ 
-  ros::spinOnce();
-  loop_rate.sleep();
 }
   ros::spinOnce();
   loop_rate.sleep();

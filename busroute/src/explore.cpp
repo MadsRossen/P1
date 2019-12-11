@@ -308,9 +308,7 @@ int main(int argc, char** argv)
   ros::Publisher publisher = node_handle.advertise<std_msgs::String>("hello_publisher", 1);
   std_msgs::String str;
   explore::Explore explore;
-  ros::Rate loop_rate(25);
-
-  
+  ros::Rate loop_rate(10);
   while(ros::ok)
   {
     /*std::stringstream ss;
@@ -332,8 +330,8 @@ int main(int argc, char** argv)
       //ROS_INFO("SENDING STOPPED.");
     }
     publisher.publish(str);
-     ros::spinOnce();
-      loop_rate.sleep();
+    ros::spinOnce();
+    loop_rate.sleep();
     
 
   }

@@ -88,3 +88,24 @@ void LineDetect::colorthresh(cv::Mat input) {
   cv::imshow(OPENCV_WINDOW_ORIGINAL, input);
   //return LineDetect::dir;
 }
+
+int main(int argc, char **argv) {
+    // Initializing node and object
+    ros::init(argc, argv, "detection");
+    //ros::NodeHandle n;
+    LineDetect det;
+    // Creating Publisher and subscriber
+    /*ros::Subscriber sub = n.subscribe("/camera/rgb/image_raw",
+        1, &LineDetect::imageCallback, &det);
+    */
+    while (ros::ok()) {
+        if (!det.img.empty()) {
+            // Perform image processing
+            det.img_filt = det.Gauss(det.img);
+            det.colorthresh(det.img_filt);
+            }
+        ros::spinOnce();
+    }
+    // Closing image viewer
+    cv::destroyWindow("Turtlebot View");
+}
