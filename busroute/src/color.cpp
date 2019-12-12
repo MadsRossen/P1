@@ -26,26 +26,26 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     int shelfUpperR = 170; 
 
     
-    int blueLowerB = 20;
+    int blueLowerB = 20; //20
     int blueLowerG = 0;
     int blueLowerR = 0;
-    int blueUpperB = 110;
-    int blueUpperG = 20;
-    int blueUpperR = 25; 
+    int blueUpperB = 130;//110
+    int blueUpperG = 40;//20
+    int blueUpperR = 20;//25 
     
     int greenLowerB = 0;
-    int greenLowerG = 10;
+    int greenLowerG = 10;//10
     int greenLowerR = 0;
-    int greenUpperB = 45;
-    int greenUpperG = 80;
-    int greenUpperR = 25; 
+    int greenUpperB = 65;//45
+    int greenUpperG = 100;//80
+    int greenUpperR = 45;//25
 
     int redLowerB = 0;
     int redLowerG = 0;
-    int redLowerR = 80;
-    int redUpperB = 35 ;
-    int redUpperG = 20;
-    int redUpperR = 160; 
+    int redLowerR = 65;//80
+    int redUpperB = 65;//35
+    int redUpperG = 50;//20
+    int redUpperR = 190;//160 
         
   
     cv::Mat mask, part, maskBlue, maskGreen, maskRed, maskShelf;
@@ -88,7 +88,7 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
 
 	// Filter by Area.
 	params.filterByArea = true;
-	params.minArea = 150;
+	params.minArea = 200;
   params.maxArea = 100000;
 
   // filter by color
@@ -136,17 +136,17 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     int whitePixels = cv::countNonZero(mask);
     //std::cout << whitePixels << std::endl;
     
-    if (whitePixels_blue >= 3000 && trashDetected_blue == false)
+    if (whitePixels_blue >= 2000 && trashDetected_blue == false)
     {
       std::cout << "trash detected (blue)" << std::endl;
       trashDetected_blue = true;
     }
-    if (whitePixels_red >= 3000 && trashDetected_red == false)
+    if (whitePixels_red >= 2000 && trashDetected_red == false)
     {
       std::cout << "trash detected (red)" << std::endl;
       trashDetected_red = true;
     }
-    if (whitePixels_green >= 3000 && trashDetected_green ==false)
+    if (whitePixels_green >= 2000 && trashDetected_green ==false)
     {
       std::cout << "trash detected (green)" << std::endl;
       trashDetected_green = true;

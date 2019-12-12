@@ -264,5 +264,18 @@ void SensorAct::callback(const std_msgs::String::ConstPtr& msg)
       runner = 2;
     }
   }
+void SensorAct::buttonCB(const kobuki_msgs::ButtonEventConstPtr msg)
+{
+     if (msg->Button1 == kobuki_msgs::ButtonEvent::PRESSED)
+     {
+          button1Pres = true;  
+     }
+     else
+     {
+          button1Pres = false;
+     }
+     
+
+}
 
 

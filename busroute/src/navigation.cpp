@@ -19,6 +19,7 @@
 #include "std_msgs/String.h"
 #include <iostream>
 #include <actionlib/client/simple_client_goal_state.h>
+#include <sound_play/sound_play.h>
 
 /*
 Here we do all the action. We include these packages
@@ -193,11 +194,11 @@ int main(int argc, char **argv){
     //Bool for running the pathplanner loop.
       bool runPathPlanner = true;
     //Variables for the size of the mapped costmap with a safety margin for the turtlebot.
-      double X_MAX = x_mappedsize - 0.5; 
-      double Y_MIN = y_firstObst_pos + 0.5;
-      double X_MIN = x_firstObst_pos + 0.5;
+      double X_MAX = x_mappedsize - 0.8; 
+      double Y_MIN = y_firstObst_pos + 0.8;
+      double X_MIN = x_firstObst_pos + 0.8;
     //Variable for the Right upper corner with a safety margin for the turtlebot.
-      double r_U_C = y_mappedsize + y_firstObst_pos - 0.5;
+      double r_U_C = y_mappedsize + y_firstObst_pos - 0.8;
 
       double jj = r_U_C;
       std::cout << "r_U_C"<<"="<<x_InitialPose<< std::endl;
@@ -267,6 +268,8 @@ int main(int argc, char **argv){
             ac.cancelGoal();
             std::cout << "Blue object detected"<< std::endl;
             colordetected = true;
+            sc.playWave("/home/ubu/ws/src/P1/busroute/sounds/blue.wav", 1.0);
+            ros::Duration(2.0).sleep();
             
           }
         //Green color detected
@@ -275,6 +278,8 @@ int main(int argc, char **argv){
             ac.cancelGoal();
             std::cout << "Green object detected"<< std::endl;
             colordetected = true;
+            sc.playWave("/home/ubu/ws/src/P1/busroute/sounds/green.wav", 1.0);
+            ros::Duration(2.0).sleep();
             
           }
         //Red color detected
@@ -283,6 +288,17 @@ int main(int argc, char **argv){
             ac.cancelGoal();
             std::cout << "Red object detected"<< std::endl;
             colordetected = true;
+            sc.playWave("/home/ubu/ws/src/P1/busroute/sounds/red.wav", 1.0);
+            ros::Duration(2.0).sleep();
+            
+          }
+          if (sAct.button1Pres == true)
+          {
+            ac.cancelAllGoals();
+            runPathPlanner = false; 
+            runningnav = false;
+            goalreached = true;
+            std::cout << "Battery low, ending task "<< std::endl;
           }
         //If color have been detected, but no more.
           if(!imgc.trashDetected_blue, !imgc.trashDetected_green, !imgc.trashDetected_red, colordetected)

@@ -9,6 +9,7 @@
 #include <kobuki_msgs/WheelDropEvent.h>
 #include <kobuki_msgs/DigitalInputEvent.h>
 #include <kobuki_msgs/PowerSystemEvent.h>
+#include <kobuki_msgs/ButtonEvent.h>
 #include <kobuki_msgs/Sound.h>
 #include <ros/console.h>
 #include <std_msgs/String.h>
@@ -43,7 +44,8 @@ cliffDetected_floor(false),
 wheeldropped(false),
 wheeldropped_right(false),
 wheeldropped_left(false),
-poseFirstrun(true)
+poseFirstrun(true),
+button1Pres(false)
 
 {
 //Initializing subscribers and publishers:
@@ -56,6 +58,7 @@ cmd_vel_pub = nh_.advertise<geometry_msgs::Twist>("/cmd_vel_mux/input/teleop", 1
 cmd_sound_pub = nh_.advertise<kobuki_msgs::Sound>("mobile_base/commands/sound", 10);
 robot_pose_subscriber_ = nh_.subscribe("robot_pose", 10 ,&SensorAct::robotPoseCB, this);
 subscriber = nh_.subscribe("hello_publisher", 1, &SensorAct::callback, this);
+button_subscriber_ = nh_.subscribe("mobile_base/events/button", 1, &SensorAct::buttonCB, this);
 }
 
 ~SensorAct()
@@ -82,6 +85,7 @@ bool wheeldropped;
 float x_InitialPose, y_InitialPose , x_currentPose, y_currentPose;
 bool poseFirstrun;
 int runner;
+bool button1Pres;
 
 
 geometry_msgs::Twist vel;
@@ -98,6 +102,7 @@ ros::Subscriber powerSystem_event_subscriber_;
 ros::Publisher cmd_sound_pub;
 ros::Subscriber robot_pose_subscriber_;
 ros::Subscriber subscriber;
+ros::Subscriber button_subscriber_;
 
 
 
@@ -132,6 +137,8 @@ ros::Subscriber subscriber;
     void robotPoseCB(const geometry_msgs::PoseConstPtr msg);
 
     void callback(const std_msgs::String::ConstPtr& msg);
+
+    void buttonCB(const kobuki_msgs::ButtonEventConstPtr msg);
 
 };
 #endif 
