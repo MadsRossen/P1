@@ -194,15 +194,15 @@ int main(int argc, char **argv){
     //Bool for running the pathplanner loop.
       bool runPathPlanner = true;
     //Variables for the size of the mapped costmap with a safety margin for the turtlebot.
-      double X_MAX = x_mappedsize - 1.0; 
+      double X_MAX = x_mappedsize - 0.7; 
       double Y_MIN = y_firstObst_pos + 0.8;
-      double X_MIN = x_firstObst_pos + 0.6;
+      double X_MIN = x_firstObst_pos + 0.5;
     //Variable for the Right upper corner with a safety margin for the turtlebot.
-      double r_U_C = y_mappedsize + y_firstObst_pos - 1.1;
+      double r_U_C = y_mappedsize + y_firstObst_pos - 0.7;
 
       double jj = r_U_C;
       std::cout << "r_U_C"<<"="<<x_InitialPose<< std::endl;
-      double ii = X_MIN;
+      double ii = 0.5;
       int turn = 2;
     //Bool for running goalState loop.
       bool goalreached = false;
@@ -352,7 +352,7 @@ int main(int argc, char **argv){
                 }
                 else
                 {
-                  ii = X_MIN;
+                  ii = 0.5;
                   turn = 1;
                 //ROS_INFO("If2.2");
                   std::cout << "If2.2"<< std::endl;
@@ -362,7 +362,7 @@ int main(int argc, char **argv){
               {
                 if (turn == 1)
                 {
-                  ii = X_MIN;
+                  ii = 0.5;
                   jj = jj - 0.5;
                   turn = 2;
                   //ROS_INFO("If3.1");
@@ -389,7 +389,7 @@ int main(int argc, char **argv){
       bool dockingreached = false;
       goal.target_pose.header.frame_id = "/map";
         goal.target_pose.header.stamp = ros::Time::now();
-        goal.target_pose.pose.position.x = X_MIN;
+        goal.target_pose.pose.position.x = 0.5;
         goal.target_pose.pose.position.y = r_U_C;
         goal.target_pose.pose.orientation.w = 1.0;
         ROS_INFO("Sending docking goal");
