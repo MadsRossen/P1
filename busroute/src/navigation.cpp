@@ -177,7 +177,7 @@ int main(int argc, char **argv){
       map_res = srv_map.response.map.info.resolution;
     //Variables for the first obstacle detected from lower left corner of costmap.
       double x_firstObst_pos = x_first_ob * map_res + srv_map.response.map.info.origin.position.x;
-      std::cout << "x_firstIbst_pos"<<"="<<x_firstObst_pos<< std::endl;
+      std::cout << "x_firstObst_pos"<<"="<<x_firstObst_pos<< std::endl;
       double y_firstObst_pos = y_first_ob * map_res + srv_map.response.map.info.origin.position.y;
       std::cout << "y_firstObst_pos"<<"="<<y_firstObst_pos<< std::endl;
 
@@ -194,19 +194,20 @@ int main(int argc, char **argv){
     //Bool for running the pathplanner loop.
       bool runPathPlanner = true;
     //Variables for the size of the mapped costmap with a safety margin for the turtlebot.
-      double X_MAX = x_mappedsize - 0.8; 
+      double X_MAX = x_mappedsize - 1.0; 
       double Y_MIN = y_firstObst_pos + 0.8;
-      double X_MIN = x_firstObst_pos + 0.8;
+      double X_MIN = x_firstObst_pos + 0.6;
     //Variable for the Right upper corner with a safety margin for the turtlebot.
-      double r_U_C = y_mappedsize + y_firstObst_pos - 0.8;
+      double r_U_C = y_mappedsize + y_firstObst_pos - 1.1;
 
       double jj = r_U_C;
       std::cout << "r_U_C"<<"="<<x_InitialPose<< std::endl;
-      double ii = 0.5;
+      double ii = X_MIN;
       int turn = 2;
     //Bool for running goalState loop.
       bool goalreached = false;
-      bool colordetected = false; 
+      bool colordetected = false;
+      bool runme = true; 
 
       std::cout << "Turtlebot pos_x"<<"="<<x_InitialPose<< std::endl;
       std::cout << "Turtlebot pos_y"<<"="<<y_InitialPose<< std::endl;
@@ -226,6 +227,7 @@ int main(int argc, char **argv){
         std::cout << "Turtlebot goal j"<<"="<<jj<< std::endl;
         std::cout << "X_MAX"<<"="<<X_MAX<< std::endl;
         std::cout << "Y_MIN"<<"="<<Y_MIN<< std::endl;
+        std::cout << "X_MIN"<<"="<<X_MIN<< std::endl;
         std::cout << "Turn"<<"="<<turn<< std::endl;
       //Sending marker for current goal
         marker.header.frame_id = "/map";
@@ -233,7 +235,7 @@ int main(int argc, char **argv){
         marker.ns = "Goal objective";
         marker.id = 0;
         marker.type = visualization_msgs::Marker::SPHERE;
-        marker.action = visualization_msgs::Marker::ADD;
+        marker.action = visualization_msgs::Marker::ADD;        
         marker.pose.position.x = ii;
         marker.pose.position.y = jj;
         marker.pose.position.z = 0;
@@ -301,7 +303,7 @@ int main(int argc, char **argv){
             std::cout << "Battery low, ending task "<< std::endl;
           }
         //If color have been detected, but no more.
-          if(!imgc.trashDetected_blue, !imgc.trashDetected_green, !imgc.trashDetected_red, colordetected)
+          if(!imgc.trashDetected_blue && !imgc.trashDetected_green && !imgc.trashDetected_red && colordetected)
           {
             ac.sendGoal(goal);
             std::cout << "Resending goal after color detected"<< std::endl;
@@ -385,15 +387,18 @@ int main(int argc, char **argv){
 
     //Return to docking station:
       bool dockingreached = false;
-      while (!dockingreached)
-      {
-        goal.target_pose.header.frame_id = "/map";
+      goal.target_pose.header.frame_id = "/map";
         goal.target_pose.header.stamp = ros::Time::now();
-        goal.target_pose.pose.position.x = 0.5;
+        goal.target_pose.pose.position.x = X_MIN;
         goal.target_pose.pose.position.y = r_U_C;
         goal.target_pose.pose.orientation.w = 1.0;
+        ROS_INFO("Sending docking goal");
         ac.sendGoal(goal);
-        ac.waitForResult();
+      while (!dockingreached)
+      {
+        
+        
+        //ac.waitForResult();
         if(ac.getState() == actionlib::SimpleClientGoalState::ABORTED)
           { 
             ROS_INFO("The base failed to archive the docking goal");
@@ -405,6 +410,8 @@ int main(int argc, char **argv){
             std::cout << "Reached docking Goal destination"<< std::endl;
             dockingreached = true;
           }
+        ros::spinOnce();
+        loop_rate.sleep(); 
       }
     //Start Auto Docking process:
       dc.sendGoal(dockGoal);
