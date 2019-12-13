@@ -25,11 +25,12 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     int shelfUpperG = 170;
     int shelfUpperR = 170; 
 
+    //Google "color picker":
     
     int blueLowerB = 20; //20
     int blueLowerG = 0;
     int blueLowerR = 0;
-    int blueUpperB = 110;//110
+    int blueUpperB = 110;//110 //Prøv med 255
     int blueUpperG = 30;//20
     int blueUpperR = 35;//25 
     
@@ -37,7 +38,7 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     int greenLowerG = 10;//10
     int greenLowerR = 0;
     int greenUpperB = 30;//45
-    int greenUpperG = 90;//80
+    int greenUpperG = 90;//80 //Prøv med 255 
     int greenUpperR = 20;//25
 
     int redLowerB = 0;
@@ -45,7 +46,7 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     int redLowerR = 25;//80
     int redUpperB = 35;//35
     int redUpperG = 20;//20
-    int redUpperR = 160;//160 
+    int redUpperR = 160;//160  //Prøv med 255
         
   
     cv::Mat mask, part, maskBlue, maskGreen, maskRed, maskShelf;
