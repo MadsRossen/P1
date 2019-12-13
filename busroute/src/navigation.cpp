@@ -194,8 +194,8 @@ int main(int argc, char **argv){
     //Bool for running the pathplanner loop.
       bool runPathPlanner = true;
     //Variables for the size of the mapped costmap with a safety margin for the turtlebot.
-      double X_MAX = x_mappedsize - 0.7; 
-      double Y_MIN = y_firstObst_pos + 0.8;
+      double X_MAX = x_mappedsize - 1.3; 
+      double Y_MIN = y_firstObst_pos + 1.2;
       double X_MIN = x_firstObst_pos + 0.5;
     //Variable for the Right upper corner with a safety margin for the turtlebot.
       double r_U_C = y_mappedsize + y_firstObst_pos - 0.7;
@@ -258,11 +258,12 @@ int main(int argc, char **argv){
           if (sAct.wheeldropped)
           {
             sc.playWave("/home/ubu/ws/src/P1/busroute/sounds/Reee.wav", 1.0);
-            ac.cancelGoal(); 
             ROS_INFO("Turtlebot is being lifted or tilted! Goal canceled. Heading back to docking station");
-            sAct.wheeldropped = false;
+            ac.cancelAllGoals();
             runPathPlanner = false; 
             runningnav = false;
+            goalreached = true;
+            ros::Duration(2.0).sleep();
           }
         //Blue color detected
           if (imgc.trashDetected_blue)
@@ -389,8 +390,8 @@ int main(int argc, char **argv){
       bool dockingreached = false;
       goal.target_pose.header.frame_id = "/map";
         goal.target_pose.header.stamp = ros::Time::now();
-        goal.target_pose.pose.position.x = 0.5;
-        goal.target_pose.pose.position.y = r_U_C;
+        goal.target_pose.pose.position.x = 0.4;
+        goal.target_pose.pose.position.y = 0;
         goal.target_pose.pose.orientation.w = 1.0;
         ROS_INFO("Sending docking goal");
         ac.sendGoal(goal);
@@ -429,6 +430,11 @@ int main(int argc, char **argv){
           break;
         }// end if
       }// end while
+      if (dc.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+      {
+        ROS_INFO("Completed docking succesfully");
+        ros::shutdown();
+      }
       ros::spinOnce();
       loop_rate.sleep();
     }//End sAct.runner loop

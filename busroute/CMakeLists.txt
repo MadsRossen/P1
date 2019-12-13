@@ -211,10 +211,8 @@ add_executable(explore
   src/costmap_client.cpp
   src/explore.cpp
   src/frontier_search.cpp
-  #src/colordetect.cpp
-  #src/tasks.cpp
-  
-
+  #src/color.cpp
+    #src/tasks.cpp
 )
 add_dependencies(explore ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(explore myLib ${catkin_LIBRARIES})
@@ -229,15 +227,15 @@ add_executable(navi
 add_dependencies(navi ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(navi myLib ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
-add_executable(colordetecter
+#add_executable(colordetecter
   #src/navigation.cpp
-  src/colordetect.cpp
+  #src/color.cpp
   #src/tasks.cpp
   
 
-)
-add_dependencies(colordetecter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(colordetecter myLib ${catkin_LIBRARIES} ${OpenCV_LIBS})
+#)
+#add_dependencies(colordetecter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#target_link_libraries(colordetecter myLib ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 #############
 ## Install ##
@@ -254,11 +252,11 @@ install(TARGETS navi
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
-install(TARGETS colordetecter
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+#install(TARGETS colordetecter
+  #ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  #LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  #RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+#)
 
 # install roslaunch files
 install(DIRECTORY launch/

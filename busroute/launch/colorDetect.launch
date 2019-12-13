@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<launch>
-  <include 
-  file = "$(find turtlebot_gazebo)/launch/turtlebot_world.launch">
-  <arg name = "world_file" value =  "$(find busroute)/map/ExploreMap1.world"/>
-  </include>
-  <include file="$(find turtlebot_gazebo)/launch/gmapping_demo.launch"/>
-  <include file="$(find turtlebot_navigation)/launch/includes/move_base.launch.xml" />
+<launch> 
+  <include file="$(find turtlebot_bringup)/launch/minimal.launch" />
+  <include file="$(find busroute)/launch/gmapping_demo.launch"/>
+  <node pkg="busroute" type="colordetecter" name="colordetecter" output="screen"/>
 <node name="$(anon rviz)" pkg="rviz" type="rviz" args="-d $(find busroute)/config/busrouting.rviz"/>
 </launch>
