@@ -31,20 +31,20 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     int blueLowerG = 0;
     int blueLowerR = 0;
     int blueUpperB = 110;//110 //Prøv med 255
-    int blueUpperG = 30;//20
-    int blueUpperR = 35;//25 
+    int blueUpperG = 20;//20
+    int blueUpperR = 25;//25 
     
     int greenLowerB = 0;
     int greenLowerG = 10;//10
     int greenLowerR = 0;
     int greenUpperB = 30;//45
-    int greenUpperG = 90;//80 //Prøv med 255 
+    int greenUpperG = 80;//80 //Prøv med 255 
     int greenUpperR = 20;//25
 
     int redLowerB = 0;
     int redLowerG = 0;
     int redLowerR = 25;//80
-    int redUpperB = 35;//35
+    int redUpperB = 30;//35
     int redUpperG = 20;//20
     int redUpperR = 160;//160  //Prøv med 255
         
@@ -66,9 +66,9 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     cv::inRange(cvImage->image, cv::Scalar(shelfLowerB,shelfLowerG,shelfLowerR), cv::Scalar(shelfUpperB,shelfUpperG,shelfUpperR), maskShelf);
     part = mask(cv::Range(350,480),cv::Range(0,640));
 
-    cv::namedWindow(OPENCV_WINDOW,600);
-    cv::imshow(OPENCV_WINDOW, part);
-    cv::imshow(OPENCV_WINDOW_UNCROPPED, mask);
+    //cv::namedWindow(OPENCV_WINDOW,600);
+    //cv::imshow(OPENCV_WINDOW, part);
+    //cv::imshow(OPENCV_WINDOW_UNCROPPED, mask);
 
 
     cv::Mat blob = ~part;
@@ -84,12 +84,12 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
 
 
     params.thresholdStep = 5;
-    params.minThreshold = 50;
-    params.maxThreshold = 220;
+    params.minThreshold = 150;
+    params.maxThreshold = 300;
 
 	// Filter by Area.
 	params.filterByArea = true;
-	params.minArea = 100;
+	params.minArea = 250;
   params.maxArea = 100000;
 
   // filter by color
@@ -106,7 +106,7 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
 
 	// Filter by Inertia
 	params.filterByInertia = true;
-	params.minInertiaRatio = 0.71;
+	params.minInertiaRatio = 0.20;
 
 
 
@@ -114,19 +114,34 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
   
   // Storage for blobs
 	vector<KeyPoint> keypoints; 
+  vector<KeyPoint> keypoints_red;
+  vector<KeyPoint> keypoints_blue;
+  vector<KeyPoint> keypoints_green;
+
 
  detector->detect( blob, keypoints);
+ detector->detect( ~maskBlue, keypoints_blue);
+ detector->detect( ~maskRed, keypoints_red);
+ detector->detect( ~maskGreen, keypoints_green);
   
-
-	Mat im_with_keypoints;
+  Mat im_with_keypoints;
+	Mat im_with_keypoints_red;
+  Mat im_with_keypoints_blue;
+  Mat im_with_keypoints_green;
 	drawKeypoints( blob, keypoints, im_with_keypoints, Scalar(0,0,255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
+  drawKeypoints( ~maskBlue, keypoints_blue, im_with_keypoints_blue, Scalar(0,0,255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
+  drawKeypoints( ~maskRed, keypoints_red, im_with_keypoints_red, Scalar(0,0,255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
+  drawKeypoints( ~maskGreen, keypoints_green, im_with_keypoints_green, Scalar(0,0,255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
   
   // detector->detect( blob, keypoints);
   // cout<<keypoints[1].pt<<endl;
-  
   imshow("keypoints", im_with_keypoints);
+  //imshow("keypoints_red", im_with_keypoints_red);
+  //imshow("keypoints_blue", im_with_keypoints_blue);
+  //imshow("keypoints_green", im_with_keypoints_green);
+  
 
-  if (keypoints.size() >0)
+  /*if (keypoints.size() >0)
   {
     //cout<< "trash detected" << endl;
   
@@ -137,17 +152,17 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     int whitePixels = cv::countNonZero(mask);
     //std::cout << whitePixels << std::endl;
     
-    if (whitePixels_blue >= 600 && trashDetected_blue == false)
+    if (whitePixels_blue >= 3000 && trashDetected_blue == false)
     {
       std::cout << "trash detected (blue)" << std::endl;
       trashDetected_blue = true;
     }
-    if (whitePixels_red >= 600 && trashDetected_red == false)
+    if (whitePixels_red >= 3000 && trashDetected_red == false)
     {
       std::cout << "trash detected (red)" << std::endl;
       trashDetected_red = true;
     }
-    if (whitePixels_green >= 600 && trashDetected_green ==false)
+    if (whitePixels_green >= 3000 && trashDetected_green ==false)
     {
       std::cout << "trash detected (green)" << std::endl;
       trashDetected_green = true;
@@ -159,6 +174,43 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
       trashDetected_green = false;
       trashDetected_red = false;
     }
+  }*/
+
+  if (keypoints_blue.size() >0)
+  {
+     if (trashDetected_blue == false)
+    {
+      std::cout << "trash detected (blue)" << std::endl;
+      trashDetected_blue = true;
+    }
+  }
+  else
+  {
+   trashDetected_blue = false; 
+  }
+  if (keypoints_red.size() >0)
+  {
+     if (trashDetected_red == false)
+    {
+      std::cout << "trash detected (red)" << std::endl;
+      trashDetected_red = true;
+    }
+  }
+  else
+  {
+   trashDetected_red = false; 
+  }
+  if (keypoints_green.size() >0)
+  {
+     if (trashDetected_green == false)
+    {
+      std::cout << "trash detected (green)" << std::endl;
+      trashDetected_green = true;
+    }
+  }
+  else
+  {
+   trashDetected_green = false; 
   }
 
     cv::waitKey(3);

@@ -88,7 +88,7 @@ int main(int argc, char **argv){
   nav_msgs::GetMap srv_map;
   ros::Publisher vis_pub = nh.advertise<visualization_msgs::Marker>( "visualization_marker", 0 );
   visualization_msgs::Marker marker;
-  ros::Rate loop_rate(25);
+  ros::Rate loop_rate(50);
   
 
   AutoDockingClient dc ("dock_drive_action", true);
@@ -404,6 +404,7 @@ int main(int argc, char **argv){
           { 
             ROS_INFO("The base failed to archive the docking goal");
             ac.cancelGoal();
+            ac.sendGoal(goal);
           }
         //If we receive result and its succeded:
         if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
